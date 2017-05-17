@@ -1,0 +1,27 @@
+<html>
+<head>
+    <title></title>
+</head>
+<body><div style="text-align: center;"><img src="Image_from_Skype.png"></div><br/><br/>
+<div style="text-align: center;margin-top: 200px;font-size: 25px;font-weight: bold;"><label>{{  data.entity.name }}</label></div><br/>
+<div class="page" style="page-break-before:always;text-align: center;"><img src="Image_from_Skype.png" height="50" width="100"></div>
+<br/><label>== DOMAINS</label><br/>
+<table>
+    {% for domain in data.domains %}
+    <tr>
+        <td>{{ domain.name }}</td>
+        <td>{{ domain.date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<br/><label>== COMPANIES</label><br/>
+<table>
+    {% for company in data.companies %}
+    <tr>
+        <td>{{ company.name }}</td>
+        <td>{{ company.date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

@@ -22,7 +22,7 @@ ADD 2es.py /opt/mailgunflanker/2es.py
 ENV HOME /opt/mailgunflanker
 
 ENV EMAILS_PATH /var/mailgunflanker
-ENV ELASTICSEARCH "http://localhost:9200"
+ENV ELASTICSEARCH "http://elasticserach:9200"
 ENV ELASTICSEARCH_INDEX  "mailgunflanker"
 
 WORKDIR /opt/mailgunflanker

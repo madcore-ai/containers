@@ -1,0 +1,1 @@
+{  "entity": {    "type": "person",    "name": "James Bond"  },  "domains": [    {      "name": "example.com",      "date": "Jan 1st"    },    {      "name": "example.com",      "date": "March 15th"    }  ],  "companies": [    {      "name": "Acme Corporation",      "date": "April 1st"    },    {      "name": "Zulu LTD",      "date": "December 20th"    }  ]}

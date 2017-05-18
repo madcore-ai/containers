@@ -22,7 +22,8 @@ def hello():
             'margin-bottom': '0.75in',
             'margin-left': '0.5in'
         }
-        pdfkit.from_file('render.html', 'render.pdf', options=options)
+        config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+        pdfkit.from_file('render.html', 'render.pdf', options=options, configuration=config)
 
 if __name__ == "__main__":
     hello()

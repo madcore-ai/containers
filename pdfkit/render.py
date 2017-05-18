@@ -7,7 +7,7 @@ def hello():
         data = json.load(data_file)
         env = Environment(loader=FileSystemLoader('.'))
         template = env.get_template("mydata.html")
-        template_vars = {"data" : data}
+        template_vars = {"jsonData" : data}
         # Render our file and create the PDF using our css style file
         html_out = template.render(template_vars)
         filename = 'render.html'

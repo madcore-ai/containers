@@ -1,27 +1,57 @@
 <html>
 <head>
     <title></title>
+    <style>
+    thead{
+        background: #cdcdcd;
+    }
+thead th{
+    padding: 10px 0px;
+}
+tbody tr td{
+    width: 50%;
+}
+table{
+    width: 50%;
+     margin: 0 auto;
+
+}
+.logo_head{
+    text-align: center;
+    padding-top: 15%;
+}
+.name_title{
+    text-align: center;
+    margin-top: 50px;px;
+    font-size: 40px;
+    font-weight: bold;
+}</style>
 </head>
-<body><div style="text-align: center;"><img src="Image_from_Skype.png"></div><br/><br/>
-<div style="text-align: center;margin-top: 200px;font-size: 25px;font-weight: bold;"><label>{{  data.entity.name }}</label></div><br/>
-<div class="page" style="page-break-before:always;text-align: center;"><img src="Image_from_Skype.png" height="50" width="100"></div>
-<br/><label>== DOMAINS</label><br/>
-<table>
-    {% for domain in data.domains %}
-    <tr>
-        <td>{{ domain.name }}</td>
-        <td>{{ domain.date }}</td>
-    </tr>
-    {% endfor %}
-</table>
-<br/><label>== COMPANIES</label><br/>
-<table>
-    {% for company in data.companies %}
-    <tr>
-        <td>{{ company.name }}</td>
-        <td>{{ company.date }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<body>
+<div class="logo_head"><img src="Image_from_Skype.png"></div>
+<br/><br/>
+<div class="name_title"><label>{{ jsonData.entity.name
+    }}</label></div>
+<br/>
+<div class="page" style="page-break-before:always;text-align: center;"><img src="Image_from_Skype.png" height="50"
+                                                                            width="100"></div>
+<br/><br/>
+{% for key, value in jsonData.items() %}
+    {% if key != 'entity' %}
+    <table>
+        <thead >
+        <th colspan="2">{{ key }}</th>
+        </thead>
+        <tbody>
+        {% for data in jsonData[key] %}
+        <tr>
+            <td>{{ data.name }}</td>
+            <td>{{ data.date }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+{% endfor %}
 </body>
 </html>

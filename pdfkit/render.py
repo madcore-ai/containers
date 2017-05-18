@@ -17,9 +17,9 @@ def hello():
         options = {
             'page-size': 'Letter',
             'margin-top': '0.75in',
-            'margin-right': '0.75in',
+            'margin-right': '0.5in',
             'margin-bottom': '0.75in',
-            'margin-left': '0.75in'
+            'margin-left': '0.5in'
         }
         pdfkit.from_file('render.html', 'render.pdf', options=options)
 

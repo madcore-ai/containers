@@ -12,8 +12,8 @@ tbody tr td{
     width: 50%;
 }
 table{
-    width: 50%;
-     margin: 0 auto;
+    width: 100%;
+    margin: 0 auto;
 
 }
 .logo_head{
@@ -22,19 +22,22 @@ table{
 }
 .name_title{
     text-align: center;
-    margin-top: 50px;px;
+    margin-top: 50px;
     font-size: 40px;
     font-weight: bold;
-}</style>
+}
+.page2 img{
+    width: 100px;
+}
+</style>
 </head>
 <body>
-<div class="logo_head"><img src="Image_from_Skype.png"></div>
+<div class="logo_head"><img src="logo.png"></div>
 <br/><br/>
 <div class="name_title"><label>{{ jsonData.entity.name
     }}</label></div>
 <br/>
-<div class="page" style="page-break-before:always;text-align: center;"><img src="Image_from_Skype.png" height="50"
-                                                                            width="100"></div>
+<div class="page2" style="page-break-before:always;text-align: center;"><img src="logo.png"></div>
 <br/><br/>
 {% for key, value in jsonData.items() %}
     {% if key != 'entity' %}

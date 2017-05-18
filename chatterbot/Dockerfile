@@ -9,7 +9,7 @@ RUN apt-get -y upgrade
 RUN apt-get install -y python-dev python-pip
  
 # Add requirements.txt
-RUN mkdir /opt/webapp
+RUN mkdir /opt/chatterbot
 ADD requirements.txt /opt/requirements.txt
 
  
@@ -19,11 +19,11 @@ RUN pip install uwsgi
 RUN pip install -r /opt/requirements.txt
  
 # Create app directory
-ADD . /opt/webapp
+ADD . /opt/chatterbot
  
 # Set the default directory for our environment
-ENV HOME /opt/webapp
-WORKDIR /opt/webapp
+ENV HOME /opt/chatterbot
+WORKDIR /opt/chatterbot
  
 # Expose port 8000 for uwsgi
 EXPOSE 9019

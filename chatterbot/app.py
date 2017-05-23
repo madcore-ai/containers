@@ -22,4 +22,4 @@ def get_raw_response():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True, host='0.0.0.0:9019', port=9019)

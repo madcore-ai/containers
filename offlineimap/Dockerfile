@@ -1,10 +1,10 @@
 FROM python:2.7
 
 ENV WORK_DIR /var/offlineimap
-ENV REMOTE_USER 'coxodox@gmail.com'
-ENV OAUTH2_CLIENT_ID '846427981560-l7a2oeb1m29moj183l9g0ruq0vlbbuic.apps.googleusercontent.com'
-ENV OAUTH2_CLIENT_SECRET 'YjYdktcPwa-RBomNZvkuuTMx'
-ENV OAUTH2_REFRESH_TOKEN '1/yR5OP7m9DnSY6oN7wvVhOYXQNSp9k9cYkjupdcyWLsjkWA7wEA-rykT_11sJkyyX'
+ENV REMOTE_USER ''
+ENV OAUTH2_CLIENT_ID ''
+ENV OAUTH2_CLIENT_SECRET ''
+ENV OAUTH2_REFRESH_TOKEN ''
 
 
 RUN apt-get update

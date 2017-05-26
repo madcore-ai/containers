@@ -1,14 +1,22 @@
-import pdfkit
 import json
 from jinja2 import Environment, FileSystemLoader
- 
+from chart.datetimechart import DateTimeChart
+import pdfkit
+
 
 def hello():
     with open('mydata.json') as data_file:
         data = json.load(data_file)
         env = Environment(loader=FileSystemLoader('.'))
         template = env.get_template("mydata.html")
-        template_vars = {"jsonData" : data}
+
+        if "chartactivity" in data["entity"]:
+            chartactivity = data["entity"]["chartactivity"]
+            chart = DateTimeChart(chartactivity[0]["name"],chartactivity[0]["color"],chartactivity[0]["values"])
+            chart.plot()
+
+
+        template_vars = {"jsonData" : data,"chart":"datetimevalue.png"}
         # Render our file and create the PDF using our css style file
         html_out = template.render(template_vars)
         filename = 'render.html'

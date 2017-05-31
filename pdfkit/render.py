@@ -2,11 +2,11 @@ import json
 from jinja2 import Environment, FileSystemLoader
 from chart.datetimechart import DateTimeChart
 import pdfkit
-
-
-def hello():
+import producer
+def render():
     with open('mydata.json') as data_file:
         data = json.load(data_file)
+        # data = json.loads(data_file)
         env = Environment(loader=FileSystemLoader('.'))
         template = env.get_template("mydata.html")
 
@@ -32,6 +32,14 @@ def hello():
         }
         config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
         pdfkit.from_file('render.html', 'render.pdf', options=options, configuration=config)
+    # a = open("render.pdf", "rb").read().encode("base64")
+    #
+    # producer.send(a)
+
+    # import base64, os
+    # with open(os.path.expanduser('test.pdf'), 'wb') as fout:
+    #      fout.write(base64.decodestring(a))
+
 
 if __name__ == "__main__":
-    hello()
+    render()

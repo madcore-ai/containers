@@ -2,6 +2,8 @@
   "entity": {
     "type": "person",
     "name": "James Bond",
+    "debug": false,
+    "page-size": "A4",
     "pages": [
       {
         "type": "person",
@@ -12,26 +14,39 @@
         "modules": [
           {
             "kind": "image",
-            "pos": [1,2],
+            "pos": [
+              1,
+              2
+            ],
             "url": "https://wiki.madcore.ai/_media/core/madcorelogoblack001.png"
           },
           {
             "kind": "image",
-            "pos": [2,5],
+            "pos": [
+              2,
+              2
+            ],
             "url": "http://www.thekrausemouse.com/wp-content/uploads/2016/03/sample-1.jpg"
           },
           {
             "kind": "text",
             "webfont": "Arial",
-            "webfontsize":"40px",
+            "webfontsize": "40px",
             "text": "James Bond",
-            "pos": [3, 2]
+            "wrap":true,
+            "pos": [
+              3,
+              2
+            ]
           },
           {
             "kind": "table",
             "webfont": "Arial",
             "webfontsize": "12px",
-            "pos": [4,1],
+            "pos": [
+              4,
+              1
+            ],
             "headers": [
               "Name",
               "location",
@@ -49,6 +64,14 @@
                 "date": "2016/04/15"
               }
             ]
+          },
+          {
+            "kind": "text",
+            "webfont": "Arial",
+            "webfontsize": "40px",
+            "text": "James Bond",
+            "wrap":false,
+            "pos": [6, 2]
           }
         ]
       }

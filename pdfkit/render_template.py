@@ -11,6 +11,11 @@ def render():
 
         entity = data["entity"]
         pages = entity["pages"]
+        debug = entity["debug"]
+        page_size = "A4"
+
+        if entity["page-size"] != "":
+            page_size = entity["page-size"]
 
         html = ''
         for page in pages:
@@ -19,16 +24,21 @@ def render():
             gutter_margin_left = page["gutter-margin-left"]
             gutter_margin_right = page["gutter-margin-right"]
 
+            if gutter_margin_left ==0 and gutter_margin_right ==0:
+                gutter_margin_left = '0.0in'
+                gutter_margin_right = '0.0in'
+                cls = 'no-gutters'
+
             modules = page["modules"]
 
 
             for i in range(1,rows+1):
-                html += "<div class='row'>";
+                html += "<div class='row "+cls+"'>";
                 for j in range(1,columns+1):
-                    html += "<div class='col'>"
+                    html += "<div class='col-2'>"
                     render_html = render_module(modules,i,j)
-                    if render_html is not None:
-                        html += str(render_html)
+                    # if render_html is not None:
+                    html += str(render_html)
                     html += "</div>"
                 html += "</div>"
 
@@ -36,7 +46,7 @@ def render():
 
         env = Environment(loader=FileSystemLoader('.'))
         template = env.get_template("templateExampleGrid.html")
-        template_vars = {"html" : html}
+        template_vars = {"html" : html,"debug":debug}
         # Render our file and create the PDF using our css style file
         html_out = template.render(template_vars)
         filename = 'render_template.html'
@@ -44,11 +54,11 @@ def render():
         f.write(html_out)
         f.close()
         options = {
-            'page-size': 'Letter',
-            'margin-top': '0.75in',
-            'margin-right': '0.5in',
-            'margin-bottom': '0.75in',
-            'margin-left': '0.5in',
+            'page-size': page_size,
+            'margin-top': '0.0mm',
+            'margin-right': '0.0mm',
+            'margin-bottom': '0.0mm',
+            'margin-left': '0.0mm',
             # 'user-style-sheet':'/home/chizz/python/madcore/containers/pdfkit/bootstrap.min.css'
         }
         config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
@@ -59,6 +69,7 @@ def render():
 
 
 def render_module(modules,i,j):
+
     for module in modules:
         pos = module["pos"]
         pos_x= pos[0]
@@ -73,13 +84,14 @@ def generate_module(data):
     kind = data["kind"]
     if kind == "image":
         url = data["url"]
-        return "<img src='"+url+"'>";
+        return "<img class='img-responsive' src='"+url+"'>";
 
 
     elif kind == "text":
         text = data["text"]
         webfont = data["webfont"]
         webfontsize = data["webfontsize"]
+        wrap = data["wrap"]
 
         return "<div style='font-family:"+webfont+"; font-size:"+webfontsize+"'>"+text+"</div>"
 

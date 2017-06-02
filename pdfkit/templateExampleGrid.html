@@ -5,8 +5,13 @@
     <title></title>
     <link rel="stylesheet" href="bootstrap.min.css">
 </head>
+<style>
+    .decorative-border .col{
+        border: 1px solid lightgray;
+    }
+</style>
 <body>
-<div class="container">
+<div class=" container  no-gutters {%if debug : %} decorative-border {%endif %}" style="padding: 0px !important;">
     {{ html }}
 </div>
 </body>

@@ -1,0 +1,115 @@
+<html>
+<head>
+    <title></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js" integrity="sha256-VNbX9NjQNRW+Bk02G/RO6WiTKuhncWI4Ey7LkSbE+5s=" crossorigin="anonymous"></script>
+    <style>
+        thead {
+            background: #cdcdcd;
+        }
+
+        thead th {
+            padding: 10px 0px;
+        }
+
+        tbody tr td {
+            width: 50%;
+        }
+
+        table {
+            width: 100%;
+            margin: 0 auto;
+
+        }
+
+        .logo_head {
+            text-align: center;
+            padding-top: 15%;
+        }
+
+        .name_title {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .page2 img {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="logo_head"><img src="logo.png"></div>
+<br/><br/>
+
+<div class="name_title"><label>{{ jsonData.entity.name
+    }}</label></div>
+<br/>
+
+<div class="page2" style="page-break-before:always;text-align: center;"><img src="logo.png"></div>
+<br/><br/>
+{% for key, value in jsonData.items() %}
+{% if key != 'entity' %}
+<table>
+    <thead>
+    <th colspan="2">{{ key }}</th>
+    </thead>
+    <tbody>
+    {% for data in jsonData[key] %}
+    <tr>
+        <td>{{ data.name }}</td>
+        <td>{{ data.date }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endfor %}
+
+<div style="page-break-before:always;text-align: center;"><img src="{{ chart }}"></div>
+
+<div class="canvas-holder" style="width: 818px; height: 409px;">
+    <canvas id="myChart" width="400" height="400"></canvas>
+</div>
+<script>
+var ctx = document.getElementById("myChart");
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        datasets: [{
+            label: '# of Votes',
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+</script>
+</body>
+
+</html>

@@ -4,7 +4,6 @@ from chart.datetimechart import DateTimeChart
 import pdfkit
 import producer
 
-
 def render():
     with open('templateExampleGrid.json') as data_file:
         data = json.load(data_file)
@@ -30,16 +29,19 @@ def render():
                 cls = 'no-gutters'
 
             modules = page["modules"]
-
+            skip_value = 0
 
             for i in range(1,rows+1):
-                html += "<div class='row "+cls+"'>";
+                html += "<div class='row "+cls+"'>"
                 for j in range(1,columns+1):
-                    html += "<div class='col-2'>"
-                    render_html = render_module(modules,i,j)
-                    # if render_html is not None:
-                    html += str(render_html)
-                    html += "</div>"
+                    # html += "<div class='col-2'>"
+                    if j > skip_value:
+                        render_html = render_module(modules,i,j)
+                        skip_value = render_html['skip_value']
+                        # if render_html is not None:
+                        html += str(render_html['html'])
+                        html += "</div>"
+                skip_value=0
                 html += "</div>"
 
 
@@ -69,14 +71,53 @@ def render():
 
 
 def render_module(modules,i,j):
-
+    colspan = 0
+    skip_y = 0
+    content = ''
+    html = ''
     for module in modules:
         pos = module["pos"]
         pos_x= pos[0]
         pos_y= pos[1]
-
+        kind = module["kind"]
         if pos_x==i and pos_y==j:
-           return generate_module(module)
+           if kind == "text":
+            wrap = True
+            if "wrap" in module:
+                wrap = module["wrap"]
+            if not wrap:
+                if "colspan" in module:
+                    colspan = module["colspan"]
+                    skip = colspan-1
+                    skip_y = pos_y+skip
+                else:
+                    colspan = (12 - pos_y)+1
+                    skip = colspan-1
+                    skip_y = pos_y+skip
+            else:
+                if "colspan" in module:
+                    colspan = module["colspan"]
+                    skip = colspan-1
+                    skip_y = pos_y+skip
+
+           content = generate_module(module)
+           break
+
+    if colspan > 0:
+        # cellappend = colspan*2 // when 6 columns
+        cellappend = colspan
+        html += "<div class='col-"+str(cellappend)+" debug'>"
+    else:
+        html += "<div class ='col-1 debug'>"
+
+    html+=content
+    context = {
+        'html':html,
+        'skip_value': skip_y
+    }
+    return context
+
+
 
 
 
@@ -91,7 +132,7 @@ def generate_module(data):
         text = data["text"]
         webfont = data["webfont"]
         webfontsize = data["webfontsize"]
-        wrap = data["wrap"]
+
 
         return "<div style='font-family:"+webfont+"; font-size:"+webfontsize+"'>"+text+"</div>"
 

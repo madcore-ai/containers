@@ -7,7 +7,7 @@
     "pages": [
       {
         "type": "person",
-        "max-x": 6,
+        "max-x": 12,
         "max-y": 12,
         "gutter-margin-left": 0,
         "gutter-margin-right": 0,
@@ -70,9 +70,29 @@
             "webfont": "Arial",
             "webfontsize": "40px",
             "text": "James Bond",
-            "wrap":false,
+            "wrap":true,
+            "colspan":2,
             "pos": [6, 2]
+          },
+          {
+            "kind": "text",
+            "webfont": "Arial",
+            "webfontsize": "40px",
+            "text": "James Bond",
+            "wrap":false,
+            "pos": [8, 3]
+          },
+          {
+            "kind": "text",
+            "webfont": "Arial",
+            "webfontsize": "40px",
+            "text": "James Bond",
+            "wrap":false,
+            "colspan":2,
+            "pos": [10, 3]
           }
+
+
         ]
       }
     ]

@@ -9,8 +9,8 @@
         "type": "person",
         "max-x": 12,
         "max-y": 12,
-        "gutter-margin-left": 0,
-        "gutter-margin-right": 0,
+        "gutter-margin-horizontal": 0,
+        "gutter-margin-vertical": 0,
         "modules": [
           {
             "kind": "image",
@@ -33,7 +33,7 @@
             "webfont": "Arial",
             "webfontsize": "40px",
             "text": "James Bond",
-            "wrap":true,
+            "wrap": true,
             "pos": [
               3,
               2
@@ -43,26 +43,30 @@
             "kind": "table",
             "webfont": "Arial",
             "webfontsize": "12px",
+            "class":"table-bordered",
+            "colspan":3,
             "pos": [
               4,
               1
             ],
             "headers": [
-              "Name",
-              "location",
-              "date"
+              "one",
+              "two",
+              "three",
+              "four"
             ],
-            "data": [
-              {
-                "name": "Peter",
-                "location": "London",
-                "date": "2017/05/31"
-              },
-              {
-                "name": "John",
-                "location": "Adelaide",
-                "date": "2016/04/15"
-              }
+            "data": [ [ "Peter","London","three",  "2017/05/31"], [ "jammy","London","three again",  "2017/05/31"] ]
+          },
+          {
+            "kind": "text",
+            "webfont": "Arial",
+            "webfontsize": "40px",
+            "text": "James Bond",
+            "wrap": true,
+            "colspan": 2,
+            "pos": [
+              6,
+              2
             ]
           },
           {
@@ -70,29 +74,35 @@
             "webfont": "Arial",
             "webfontsize": "40px",
             "text": "James Bond",
-            "wrap":true,
-            "colspan":2,
-            "pos": [6, 2]
+            "wrap": false,
+            "pos": [
+              8,
+              3
+            ]
           },
           {
             "kind": "text",
             "webfont": "Arial",
             "webfontsize": "40px",
             "text": "James Bond",
-            "wrap":false,
-            "pos": [8, 3]
+            "wrap": false,
+            "colspan": 2,
+            "pos": [
+              10,
+              3
+            ]
           },
           {
             "kind": "text",
             "webfont": "Arial",
             "webfontsize": "40px",
-            "text": "James Bond",
-            "wrap":false,
-            "colspan":2,
-            "pos": [10, 3]
+            "text": "Jaim jaimy",
+            "wrap": true,
+            "pos": [
+              5,
+              1
+            ]
           }
-
-
         ]
       }
     ]

@@ -1,8 +1,10 @@
 import json
 from jinja2 import Environment, FileSystemLoader
-from chart.datetimechart import DateTimeChart
+
+from pdfkit.chart.datetimechart import DateTimeChart
 import pdfkit
-import producer
+
+
 def render():
     with open('mydata.json') as data_file:
         data = json.load(data_file)

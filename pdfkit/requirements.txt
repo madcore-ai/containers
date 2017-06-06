@@ -1,4 +1,5 @@
 appdirs==1.4.3
+avro==1.8.2
 cycler==0.10.0
 Flask==0.10.1
 functools32==3.2.3.post2
@@ -11,6 +12,7 @@ numpy==1.13.0rc1
 packaging==16.8
 pdfkit==0.6.1
 pyparsing==2.2.0
+pyPdf==1.13
 python-dateutil==2.6.0
 pytz==2017.2
 six==1.10.0

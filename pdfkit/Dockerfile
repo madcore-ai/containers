@@ -17,4 +17,4 @@ ADD . /opt/pdfkit
 ENV HOME /opt/pdfkit
 WORKDIR /opt/pdfkit
  
-CMD [ "python", "./render.py" ]
+CMD [ "python", "./render_template.py" ]

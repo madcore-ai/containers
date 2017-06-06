@@ -1,5 +1,4 @@
 from kafka import KafkaConsumer
-import render
 
 consumer = KafkaConsumer("pdf-generate-result")
 

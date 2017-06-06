@@ -1,7 +1,14 @@
 FROM python:2.7
 
 RUN apt-get update
-RUN apt-get -y upgrade
+
+# Install wkhtmltopdf
+RUN curl -L#o wk.tar.xz https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz \
+    && tar xf wk.tar.xz \
+    && cp wkhtmltox/bin/wkhtmltopdf /usr/bin \
+    && cp wkhtmltox/bin/wkhtmltoimage /usr/bin \
+    && rm wk.tar.xz \
+    && rm -r wkhtmltox
 
 # Add requirements.txt
 RUN mkdir /opt/pdfkit

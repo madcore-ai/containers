@@ -70,7 +70,7 @@ def render():
             'margin-left': gutter_margin_left,
             # 'user-style-sheet':'/home/chizz/python/madcore/containers/pdfkit/bootstrap.min.css'
         }
-        config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')
+        config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
         # css = '/home/chizz/python/madcore/containers/pdfkit/bootstrap.min.css'
         pdfkit.from_file('template/render_template.html', 'render_template.pdf', options=options, configuration=config)
 

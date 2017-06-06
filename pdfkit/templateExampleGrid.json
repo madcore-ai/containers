@@ -2,7 +2,7 @@
   "entity": {
     "type": "person",
     "name": "James Bond",
-    "debug": false,
+    "debug": true,
     "page-size": "A4",
     "pages": [
       {

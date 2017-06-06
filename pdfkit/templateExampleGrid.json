@@ -2,7 +2,7 @@
   "entity": {
     "type": "person",
     "name": "James Bond",
-    "debug": false,
+    "debug": true,
     "page-size": "A4",
     "pages": [
       {
@@ -102,6 +102,45 @@
               5,
               1
             ]
+          },
+          {
+            "kind":"chart-donut",
+            "id":"chart3",
+            "chart-type":"donut",
+            "data-chart-max":"1000",
+            "data-chart-segments":"{ '0':['0','50','#FDCA00'], '1':['50','450','#19A7F5'], '2':['500','500','#8100C8'] }",
+            "data-chart-initial-rotate":"90",
+            "data-chart-caption":"3 Segments, 90 degree rotation",
+            "data-chart-text":"90°",
+            "pos":[4,5],
+            "colspan":2
+
+          },
+          {
+            "kind":"chart-donut",
+            "id":"chart4",
+            "chart-type":"donut",
+            "data-chart-max":"1000",
+            "data-chart-segments":"{ '0':['0','50','#FDCA00'], '1':['50','450','#19A7F5'], '2':['500','500','#8100C8'] }",
+            "data-chart-initial-rotate":"90",
+            "data-chart-caption":"3 Segments, 90 degree rotation",
+            "data-chart-text":"90°",
+            "pos":[5,6],
+            "colspan":2
+
+          },
+          {
+            "kind":"chart-donut",
+            "id":"chart5",
+            "chart-type":"donut",
+            "data-chart-max":"1000",
+            "data-chart-segments":"{ '0':['0','50','#FDCA00'], '1':['50','450','#19A7F5'], '2':['500','500','#8100C8'] }",
+            "data-chart-initial-rotate":"90",
+            "data-chart-caption":"3 Segments, 90 degree rotation",
+            "data-chart-text":"90°",
+            "pos":[4,8],
+            "colspan":2
+
           }
         ]
       }

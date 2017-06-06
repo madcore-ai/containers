@@ -48,7 +48,7 @@ def render():
                         render_html = render_module(modules, i, j)
                         skip_value = render_html['skip_value']
                         # if render_html is not None:
-                        html += str(render_html['html'])
+                        html += render_html['html']
                         html += "</div>"
                 skip_value = 0
                 html += "</div>"
@@ -60,7 +60,7 @@ def render():
         html_out = template.render(template_vars)
         filename = 'template/render_template.html'
         f = open(filename, 'w+')
-        f.write(html_out)
+        f.write(html_out.encode('utf-8').strip())
         f.close()
         options = {
             'page-size': page_size,
@@ -111,6 +111,12 @@ def render_module(modules, i, j):
                     skip = colspan - 1
                     skip_y = pos_y + skip
 
+            if kind == "chart-donut":
+                if "colspan" in module:
+                    colspan = module["colspan"]
+                    skip = colspan - 1
+                    skip_y = pos_y + skip
+
             content = generate_module(module)
             break
 
@@ -148,9 +154,6 @@ def generate_module(data):
         else:
             return "<div style='font-family:" + webfont + "; font-size:" + webfontsize + "'>" + text + "</div>"
 
-
-
-
     elif kind == "table":
         headers = data["headers"]
         datas = data["data"]
@@ -171,6 +174,21 @@ def generate_module(data):
         table += "</table>"
         return table
 
+    elif kind=="chart-donut":
+        id = data["id"]
+        chart_type = data["chart-type"]
+        data_chart_max = data["data-chart-max"]
+        data_chart_segments = str(data["data-chart-segments"]).replace("'",'"')
 
+        data_chart_initial_rotate = data["data-chart-initial-rotate"]
+        data_chart_caption = data["data-chart-caption"]
+        data_chart_text = data["data-chart-text"]
+
+        chart = "<div class='chartbox'>"
+        chart +="<div id='"+id+"' chart-type='"+chart_type+"' data-chart-max='"+data_chart_max+"' data-chart-segments='"+data_chart_segments+"'"
+        chart += "data-chart-text='"+data_chart_text+"' data-chart-caption='"+data_chart_caption+"' data-chart-initial-rotate='"+data_chart_initial_rotate+"' >"
+        chart += "</div>"
+        chart += "</div>"
+        return chart
 if __name__ == "__main__":
     render()

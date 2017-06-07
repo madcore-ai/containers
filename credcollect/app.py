@@ -47,7 +47,7 @@ def index():
                  'madcore_guid':me.data['id'],'email':me.data['email']}}
         with open('user/gmail/%s.yaml' %me.data['id'], 'w') as outfile:
             yaml.safe_dump(write_data, outfile, default_flow_style=False)
-        return jsonify({"data": me.data})
+        # return jsonify({"data": me.data})
     except:
         return render_template('index.html')
 

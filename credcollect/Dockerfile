@@ -9,7 +9,7 @@ RUN apt-get -y upgrade
 RUN apt-get install -y python-dev python-pip
  
 # Add requirements.txt
-RUN mkdir /opt/social
+RUN mkdir /opt/credcollect
 ADD requirements.txt /opt/requirements.txt
 
  
@@ -19,11 +19,11 @@ RUN pip install uwsgi
 RUN pip install -r /opt/requirements.txt
  
 # Create app directory
-ADD . /opt/social
+ADD . /opt/credcollect
  
 # Set the default directory for our environment
-ENV HOME /opt/social
-WORKDIR /opt/social
+ENV HOME /opt/credcollect
+WORKDIR /opt/credcollect
  
 # Expose port 8000 for uwsgi
 EXPOSE 9019

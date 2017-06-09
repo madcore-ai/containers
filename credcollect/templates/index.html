@@ -71,11 +71,13 @@ body { padding: 2em; }
 <div>
   <img src="https://madcore.ai/wp-content/uploads/2016/12/MadCoreLogo001-e1481323055628.png" style="background: #000">
 </div>
-<div style="float: left">
-  <button class="loginBtn loginBtn--google" onclick="location.href='/login';">
-    Login with Google
-  </button>
-</div>
+{% if google_status %}
+  <div style="float: left">
+    <button class="loginBtn loginBtn--google" onclick="location.href='/login';">
+      Login with Google
+    </button>
+  </div>
+{% endif %}
 <div>
   <h3>{{message}}</h3>
 </div>

@@ -6,6 +6,7 @@ from flask_oauthlib.client import OAuth
 app = Flask(__name__)
 app.debug = True
 app.secret_key = 'development'
+google_status = False
 try:
     with open("apps/gmail.yaml", 'r') as stream:
         try:
@@ -30,23 +31,9 @@ try:
         access_token_url='https://accounts.google.com/o/oauth2/token',
         authorize_url='https://accounts.google.com/o/oauth2/auth',
     )
+    google_status = True
 except:
-    oauth = OAuth(app)
-    google = oauth.remote_app(
-        'google',
-        consumer_key='XXXXX',
-        consumer_secret='XXXXXXXXXXXXXXX',
-        request_token_params={
-            'scope': 'email',
-            'access_type': 'offline'
-        }
-        ,
-        base_url='https://www.googleapis.com/oauth2/v1/',
-        request_token_url=None,
-        access_token_method='POST',
-        access_token_url='https://accounts.google.com/o/oauth2/token',
-        authorize_url='https://accounts.google.com/o/oauth2/auth',
-    )
+    pass
 
 @app.route('/')
 def index():
@@ -63,9 +50,9 @@ def index():
                  'madcore_guid':me.data['id'],'email':me.data['email']}}
         with open('user/gmail/%s.yaml' %me.data['id'], 'w') as outfile:
             yaml.safe_dump(write_data, outfile, default_flow_style=False)
-        return render_template('index.html',message="Successfully logged in")
+        return render_template('index.html',message="Successfully logged in",google_status=False)
     except:
-        return render_template('index.html')
+        return render_template('index.html',google_status=google_status)
 
 
 @app.route('/login')
@@ -78,10 +65,10 @@ def logout():
     session.pop('google_token', None)
     return redirect(url_for('index'))
 
-
-@google.tokengetter
-def get_google_oauth_token():
-    return session.get('google_token')
+if google_status:
+    @google.tokengetter
+    def get_google_oauth_token():
+        return session.get('google_token')
 
 
 if __name__ == '__main__':

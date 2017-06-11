@@ -27,7 +27,7 @@ type = Gmail
 remoteuser = $REMOTE_USER
 oauth2_client_id = $CLIENT_ID
 oauth2_client_secret = $CLIENT_SECRET
-oauth2_refresh_token = $OAUTH_REFRESH_TOKEN
+oauth2_refresh_token = $REFRESH_TOKEN
 sslcacertfile = /etc/ssl/certs/ca-certificates.crt
 realdelete = no
 

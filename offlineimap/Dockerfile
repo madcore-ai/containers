@@ -16,5 +16,4 @@ RUN cd {$PATH_APP} && python setup.py install
 ADD .utf7.py $PATH_DATA/.utf7.py
 ADD run.sh $PATH_BASE/run.sh
 
-
 CMD /bin/bash -c $PATH_BASE/run.sh

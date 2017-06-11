@@ -1,24 +1,20 @@
 FROM python:2.7
 
-ENV WORK_DIR /var/offlineimap
-ENV REMOTE_USER ''
-ENV OAUTH2_CLIENT_ID ''
-ENV OAUTH2_CLIENT_SECRET ''
-ENV OAUTH2_REFRESH_TOKEN ''
-
+ENV PATH_BASE /var/offlineimap
+ENV PATH_APP $PATH_BASE/app
+ENV PATH_DATA /opt/offlineimap
 
 RUN apt-get update
 RUN apt-get install -y git
-RUN pip install Jinja2
-RUN pip install jinja2-cli
 
-ADD offlineimap_config.j2 /tmp/offlineimap_config.j2
+RUN mkdir -p ${PATH_APP}
+RUN mkdir ${PATH_DATA}
 
-RUN mkdir ${WORK_DIR}
+RUN git clone -b gmail_oauth https://github.com/styk-tv/offlineimap.git {$PATH_APP}
+RUN cd {$PATH_APP} && python setup.py install
 
-RUN mkdir /opt/offlineimap
-RUN git clone -b docker https://github.com/styk-tv/offlineimap.git /opt/offlineimap
-RUN cd /opt/offlineimap && python setup.py install
+ADD .utf7.py $PATH_DATA/.utf7.py
+ADD run.sh $PATH_BASE/run.sh
 
-CMD echo "{\"remote_user\":\"$REMOTE_USER\",\"volume_mount_path\":\"$WORK_DIR\",\"oauth2_client_id\":\"$OAUTH2_CLIENT_ID\",\"oauth2_client_secret\":\"$OAUTH2_CLIENT_SECRET\",\"oauth2_refresh_token\":\"$OAUTH2_REFRESH_TOKEN\"}" | jinja2 /tmp/offlineimap_config.j2 --format=json >/root/.offlineimaprc & /usr/bin/python2.7 /opt/offlineimap/offlineimap.py
 
+CMD /bin/bash -c $PATH_BASE/run.sh

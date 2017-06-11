@@ -10,7 +10,7 @@ RUN apt-get install -y git
 RUN mkdir -p ${PATH_APP}
 RUN mkdir ${PATH_DATA}
 
-RUN git clone -b gmail_oauth https://github.com/styk-tv/offlineimap.git {$PATH_APP}
+RUN git clone -b gmail-oauth https://github.com/styk-tv/offlineimap.git {$PATH_APP}
 RUN cd {$PATH_APP} && python setup.py install
 
 ADD .utf7.py $PATH_DATA/.utf7.py

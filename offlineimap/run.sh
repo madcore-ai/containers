@@ -6,7 +6,7 @@ dry-run = False
 ui = ttyui
 accounts = gmail
 fsync = False
-pythonfile = $PATH_DATA/.utf7.py
+pythonfile = $PATH_BASE/utf7.py
 
 [Account gmail]
 localrepository = gmail-local

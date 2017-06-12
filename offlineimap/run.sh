@@ -39,5 +39,5 @@ folderfilter = lambda foldername: foldername in ['[Gmail]/All Mail', '[Google Ma
 
 " > $PATH_DATA/.offlineimaprc.$REMOTE_USER
 
-/usr/bin/python2.7 $PATH_APP/offlineimap -c $PATH_DATA/.offlineimaprc.$REMOTE_USER
+offlineimap -c $PATH_DATA/.offlineimaprc.$REMOTE_USER
 rm $PATH_DATA/.offlineimaprc.$REMOTE_USER

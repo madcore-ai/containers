@@ -4,8 +4,8 @@ import f2n
 
 
 def main():
-    emails_path = os.getenv('PATH_DATA', "/opt/offlineimap")
-    f2n_instance = f2n.F2n(['map01', 'url01'])
+    emails_path = os.getenv('PATH_DATA', "/tmp/allmail/test")
+    f2n_instance = f2n.F2n(['url01'])
 
     for root, dirs, files in os.walk(emails_path):
         for file in files:

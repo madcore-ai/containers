@@ -3,6 +3,7 @@ import re
 import validators
 from lxml import html
 from flanker.addresslib import address
+import tldextract
 
 class F2n(object):
 
@@ -15,45 +16,41 @@ class F2n(object):
         self.processors = activate_processors_list
 
     @staticmethod
-    def w2n_EmailAddress_SENT_Message(tx, email, message):
+    def w2n_EmailAddress_SENT_Message(tx, email, message_id):
         tx.run("MERGE (user:EmailAddress {name: $email_address, display_name: $email_name}) "
-               "MERGE (email: Message {id: $message_id, content: $message_content}) "
+               "MERGE (email: Message {message_id: $message_id}) "
                "MERGE (user)-[:SENT]->(email)",
                email_address=email['address'],
                email_name=email['name'],
-               message_id=message['id'],
-               message_content=message['content'])
+               message_id=message_id)
 
     @staticmethod
-    def w2n_Message_TO_EmailAddress(tx, message, email):
-        tx.run("MERGE (email: Message {id: $message_id, content: $message_content}) "
+    def w2n_Message_TO_EmailAddress(tx, message_id, email):
+        tx.run("MERGE (email: Message {message_id: $message_id}) "
                "MERGE (user:EmailAddress {name: $email_address, display_name: $email_name}) "
                "MERGE (email)-[:TO]->(user)",
-               message_id=message['id'],
-               message_content=message['content'],
+               message_id=message_id,
                email_address=email['address'],
                email_name=email['name'])
 
     @staticmethod
-    def w2n_Message_CC_EmailAddress(tx, message, email):
-        tx.run("MERGE (email: Message {id: $message_id, content: $message_content}) "
+    def w2n_Message_CC_EmailAddress(tx, message_id, email):
+        tx.run("MERGE (email: Message {message_id: $message_id}) "
                "MERGE (user:EmailAddress {name: $email_address, display_name: $email_name}) "
                "MERGE (email)-[:CC]->(user)",
-               message_id=message['id'],
-               message_content=message['content'],
+               message_id=message_id,
                email_address=email['address'],
                email_name=email['name'])
 
     @staticmethod
-    def w2n_Message_CONTAINS_Url(tx, message, url):
-        tx.run("MERGE (email: Message {id: $message_id, content: $message_content}) "
+    def w2n_Message_CONTAINS_Url(tx, message_id, url):
+        tx.run("MERGE (email: Message {message_id: $message_id}) "
                "MERGE (url: Url {full_link: $url_full, scheme: $scheme, sub_domain: $sub, domain: $domain, document: $document }) "
                "MERGE (email)-[:CONTAINS]->(url)",
-               message_id=message['id'],
-               message_content=message['content'],
+               message_id=message_id,
                url_full=url['full'],
                scheme=url['scheme'],
-               sub='wwww',
+               sub=url['sub_domain'],
                domain=url['domain'],
                document=url['document'])
 
@@ -64,7 +61,7 @@ class F2n(object):
                "MERGE (url)-[:BELONGS_TO]->(domain)",
                url_full=url['full'],
                scheme=url['scheme'],
-               sub='wwww',
+               sub=url['sub_domain'],
                domain=url['domain'],
                document=url['document'],
                original_domain=domain)
@@ -73,7 +70,7 @@ class F2n(object):
     def w2n_EmailAddress_BELONGS_TO_Domain(tx, email, domain):
         tx.run("MERGE (user:EmailAddress {name: $email_address, display_name: $email_name}) "
                "MERGE (domain: Domain {name: $original_domain}) "
-               "MERGE (url)-[:BELONGS_TO]->(domain)",
+               "MERGE (user)-[:BELONGS_TO]->(domain)",
                email_address=email['address'],
                email_name=email['name'],
                original_domain=domain)
@@ -85,7 +82,7 @@ class F2n(object):
                "MERGE (url)-[:POSTED_BY]->(user)",
                url_full=url['full'],
                scheme=url['scheme'],
-               sub='wwww',
+               sub=url['sub_domain'],
                domain=url['domain'],
                document=url['document'],
                email_address=email['address'],
@@ -98,7 +95,7 @@ class F2n(object):
         regex += r'(?:www\.)?'
         regex += r'('
         regex += r'(?:(?:[A-Z0-9][A-Z0-9-]{0,61}[A-Z0-9]\.)+)'
-        regex += r'([A-Z0-9][A-Z0-9-]{0,61}\.[A-Z]{2,6})'
+        regex += r'([A-Z]{2,6})'
         regex += r'|(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
         regex += r')'
         regex += r'(?::(\d{1,5}))?'
@@ -128,7 +125,7 @@ class F2n(object):
                 if part.content_type.sub == 'plain':
                     for line in part.body.splitlines():
                         data, _, _, _, _, _ = self.extract_url_from_text_plain(line)
-                        if data:
+                        if data and validators.url(data):
                             result.add(data)
                 if part.content_type.sub == 'html':
                     tmp = self.extract_url_from_text_html(part.body)
@@ -147,16 +144,19 @@ class F2n(object):
         # 'Delivered-To', 'Cc', 'Bcc', 'Reply-To')
         with self.driver.session() as session:
             self.count+=2
-            session.write_transaction(self.w2n_EmailAddress_SENT_Message, self.sender, self.message)
-            session.write_transaction(self.w2n_EmailAddress_BELONGS_TO_Domain, self.sender, self.sender['address'].split('@')[-1])
+            session.write_transaction(self.w2n_EmailAddress_SENT_Message, self.sender, self.message_id)
+            session.write_transaction(self.w2n_EmailAddress_BELONGS_TO_Domain, self.sender,
+                                      self.sender['address'].split('@')[-1])
             for to_email in self.receivers['to']:
                 self.count+=2
-                session.write_transaction(self.w2n_Message_TO_EmailAddress, self.message, to_email)
-                session.write_transaction(self.w2n_EmailAddress_BELONGS_TO_Domain, to_email, to_email['address'].split('@')[-1])
+                session.write_transaction(self.w2n_Message_TO_EmailAddress, self.message_id, to_email)
+                session.write_transaction(self.w2n_EmailAddress_BELONGS_TO_Domain, to_email,
+                                          to_email['address'].split('@')[-1])
             for cc_email in self.receivers['cc']:
                 self.count+=2
-                session.write_transaction(self.w2n_Message_CC_EmailAddress, self.message, cc_email)
-                session.write_transaction(self.w2n_EmailAddress_BELONGS_TO_Domain, cc_email, cc_email['address'].split('@')[-1])
+                session.write_transaction(self.w2n_Message_CC_EmailAddress, self.message_id, cc_email)
+                session.write_transaction(self.w2n_EmailAddress_BELONGS_TO_Domain, cc_email,
+                                          cc_email['address'].split('@')[-1])
 
 
 
@@ -165,21 +165,21 @@ class F2n(object):
         # mappings of URL in headers or message bodies
 
         result = self.__url01_process_mime_part(msg)
-        # print result
         for data in result:
-            if validators.url(data):
-                _, scheme, full_domain, domain, _, document = self.extract_url_from_text_plain(
-                    data)
-                url = {
-                    'full': str(data),
-                    'scheme': str(scheme),
-                    'domain': str(domain),
-                    'document': str(document)
-                }
-                with self.driver.session() as session:
-                    self.count+=2
-                    session.write_transaction(self.w2n_Message_CONTAINS_Url, self.message, url)
-                    session.write_transaction(self.w2n_Url_BELONGS_TO_Domain, url, url['domain'])
+            _, scheme, full_domain, _, _, document = self.extract_url_from_text_plain(
+                data)
+            tmp = tldextract.extract(full_domain)
+            url = {
+                'full': str(data),
+                'scheme': str(scheme),
+                'sub_domain': tmp.subdomain,
+                'domain': '.'.join(tmp[1:]),
+                'document': str(document)
+            }
+            with self.driver.session() as session:
+                self.count+=2
+                session.write_transaction(self.w2n_Message_CONTAINS_Url, self.message_id, url)
+                session.write_transaction(self.w2n_Url_BELONGS_TO_Domain, url, url['domain'])
 
     def ip01(self, msg):
         ip_found = re.findall(
@@ -190,10 +190,7 @@ class F2n(object):
         # count how many time connect to neo4j
         self.count = 0
         # initialize message basic information
-        self.message = {
-            'id': str(msg.message_id),
-            'content': msg.to_string()
-        }
+        self.message_id = str(msg.message_id)
 
         sender = address.parse(msg.headers.get('From'))
         self.sender = {
@@ -211,7 +208,8 @@ class F2n(object):
                 'name': value.display_name
             }
             self.receivers['to'].append(tmp)
-        for value in address.parse_list(msg.headers.get('CC')):
+
+        for value in address.parse_list(msg.headers.get('Cc')):
             tmp = {
                 'address': value.address,
                 'name': value.display_name

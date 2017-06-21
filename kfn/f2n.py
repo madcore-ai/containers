@@ -146,12 +146,15 @@ class F2n(object):
         # mapping of email interactions, ADDRESS_HEADERS = ('From', 'To',
         # 'Delivered-To', 'Cc', 'Bcc', 'Reply-To')
         with self.driver.session() as session:
+            self.count+=2
             session.write_transaction(self.w2n_EmailAddress_SENT_Message, self.sender, self.message)
             session.write_transaction(self.w2n_EmailAddress_BELONGS_TO_Domain, self.sender, self.sender['address'].split('@')[-1])
             for to_email in self.receivers['to']:
+                self.count+=2
                 session.write_transaction(self.w2n_Message_TO_EmailAddress, self.message, to_email)
                 session.write_transaction(self.w2n_EmailAddress_BELONGS_TO_Domain, to_email, to_email['address'].split('@')[-1])
             for cc_email in self.receivers['cc']:
+                self.count+=2
                 session.write_transaction(self.w2n_Message_CC_EmailAddress, self.message, cc_email)
                 session.write_transaction(self.w2n_EmailAddress_BELONGS_TO_Domain, cc_email, cc_email['address'].split('@')[-1])
 
@@ -174,6 +177,7 @@ class F2n(object):
                     'document': str(document)
                 }
                 with self.driver.session() as session:
+                    self.count+=2
                     session.write_transaction(self.w2n_Message_CONTAINS_Url, self.message, url)
                     session.write_transaction(self.w2n_Url_BELONGS_TO_Domain, url, url['domain'])
 
@@ -183,6 +187,8 @@ class F2n(object):
         pass
 
     def process(self, msg):
+        # count how many time connect to neo4j
+        self.count = 0
         # initialize message basic information
         self.message = {
             'id': str(msg.message_id),
@@ -214,3 +220,5 @@ class F2n(object):
 
         for func in self.processors:
             getattr(self, func)(msg)
+
+        print 'connections ', self.count

@@ -112,8 +112,34 @@ class F2n(object):
                     message_id=message_id)
         self.w2n_check_and_commit()
 
-    def w2n_Message_HAS_Part(self, message_id, message_part):
-        pass
+    def w2n_Part_HAS_Header(self, part_id, headers):
+        data = []
+        for key in headers.keys():
+            value = u"{0}".format(headers.get(key))
+            data.append(u' {0}: \'{1}\''.format(key.replace('-','_'), value.replace("'",'"')))
+
+        self.tx.run(u"MERGE (part:MessagePart {{part_id: {{part_id}}}}) "
+                    "MERGE (header:Header {{{0}}}) "
+                    "MERGE (part)-[:HAS]->(header)".format(','.join(data)),
+                    part_id=part_id)
+        self.w2n_check_and_commit()
+
+    def w2n_Part_HAS_Part(self, parent_part_id, childrent_part_ids):
+        for child_part_id in childrent_part_ids:
+            self.txt.run("MERGE (p_part:MessagePart {parent_part_id: {parent_part_id}}) "
+                         "MERGE (part:MessagePart {child_part_id: {child_part_id}}) "
+                         "MERGE (p_part)-[:HAS]->[part]",
+                         parent_part_id=parent_part_id,
+                         child_part_id=child_part_id)
+            self.w2n_check_and_commit()
+
+    def w2n_Message_HAS_Part(self, message_id, part_id):
+        self.tx.run("MERGE (email:Message {message_id: {message_id}}) "
+                    "MERGE (part:MessagePart {part_id: {part_id}}) "
+                    "MERGE (email)-[:HAS]->(part)",
+                    message_id=message_id,
+                    part_id=part_id)
+        self.w2n_check_and_commit()
 
     # def w2n_
 
@@ -198,9 +224,16 @@ class F2n(object):
             }
             self.w2n_Message_CONTAINS_Url(self.message_id, url)
             self.w2n_Url_BELONGS_TO_Domain(url, url['domain'])
+            self.w2n_Url_POSTED_BY_EmailAddress(url, self.sender)
 
     def headers(self, msg):
         self.w2n_Message_HAS_Header(self.message_id, msg.headers)
+        if msg.parts:
+            i = 1
+            for part in msg.walk():
+                part_id = msg.message_id + '-p%d'%(i)
+                self.w2n_Message_HAS_Part(msg.message_id, part_id)
+                self.w2n_Part_HAS_Header(part_id, part.headers)
 
     def ip01(self, msg):
         ip_found = re.findall(

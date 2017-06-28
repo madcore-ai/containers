@@ -19,12 +19,14 @@ def main():
     args = parser.parse_args()
 
     if (args.transport == 'QUEUE' and not args.queue_server and not args.queue_name):
-        parser.error('The --transport QUEUE requires --queue_name and --queue_server')
+        parser.error(
+            'The --transport QUEUE requires --queue_name and --queue_server')
     elif(args.transport == 'FILE' and not args.file_store_path):
         parser.error('The --transport FILE requires --file_store_path')
 
+    sections = [x.split() for x in args.sections.split(',')]
     if (args.perspective == 'DOMAIN'):
-        domain_handler = Domain_Handler()
+        domain_handler = Domain_Handler(self.file_store_path, sections)
         domain_handler.process()
 
 if __name__ == '__main__':

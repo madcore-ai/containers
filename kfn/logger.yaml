@@ -1,0 +1,39 @@
+version: 1
+
+formatters:
+    custom_format:
+        format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+filters:
+    kfn:
+        name: kfn
+
+handlers:
+    console:
+        class: logging.StreamHandler
+        formatter: custom_format
+    info:
+        class: logging.handlers.RotatingFileHandler
+        formatter: custom_format
+        filename: 'logs/import.log'
+        filters: [kfn]
+        maxBytes: 1024
+        backupCount: 5
+    error:
+        class: logging.handlers.RotatingFileHandler
+        formatter: custom_format
+        filename: 'logs/error.log'
+        filters: [kfn]
+        maxBytes: 1024
+        backupCount: 5
+
+loggers:
+    '':
+        handlers: [console]
+        level: INFO
+    info:
+        handlers: [info]
+        level: INFO
+    error:
+        handlers: [error]
+        level: INFO

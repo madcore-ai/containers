@@ -4,6 +4,12 @@ import validators
 from lxml import html
 from flanker.addresslib import address
 import tldextract
+import yaml
+import logging
+import logging.config
+import email.utils
+import time
+import datetime
 
 
 class F2n(object):
@@ -14,9 +20,14 @@ class F2n(object):
                  neo4j_password="neo4j"):
 
         self.graph = Graph(neo4j_connection_string,
-                            user=neo4j_user,
-                            password=neo4j_password)
+                           user=neo4j_user,
+                           password=neo4j_password)
         self.processors = activate_processors_list
+        with open('config.yaml', 'r') as f:
+            conf = yaml.load(f)
+            logging.config.dictConfig(conf)
+        self.logging = logging.getLogger('info')
+        self.error = logging.getLogger('error')
 
     def w2n_check_and_commit(self):
         self.count += 1
@@ -29,29 +40,29 @@ class F2n(object):
 
     def w2n_EmailAddress_SENT_Message(self, email, message_id):
         self.tx.run("MERGE (user:EmailAddress {name: {email_address}, display_name: {email_name}}) "
-                          "MERGE (email: Message {message_id: {message_id}}) "
-                          "MERGE (user)-[:SENT]->(email)",
-                          email_address=email['address'],
-                          email_name=email['name'],
-                          message_id=message_id)
+                    "MERGE (email: Message {message_id: {message_id}}) "
+                    "MERGE (user)-[:SENT]->(email)",
+                    email_address=email['address'],
+                    email_name=email['name'],
+                    message_id=message_id)
         self.w2n_check_and_commit()
 
     def w2n_Message_TO_EmailAddress(self, message_id, email):
         self.tx.run("MERGE (email: Message {message_id: {message_id}}) "
-                          "MERGE (user:EmailAddress {name: {email_address}, display_name: {email_name}}) "
-                          "MERGE (email)-[:TO]->(user)",
-                          message_id=message_id,
-                          email_address=email['address'],
-                          email_name=email['name'])
+                    "MERGE (user:EmailAddress {name: {email_address}, display_name: {email_name}}) "
+                    "MERGE (email)-[:TO]->(user)",
+                    message_id=message_id,
+                    email_address=email['address'],
+                    email_name=email['name'])
         self.w2n_check_and_commit()
 
     def w2n_Message_CC_EmailAddress(self, message_id, email):
         self.tx.run("MERGE (email: Message {message_id: {message_id}}) "
-                          "MERGE (user:EmailAddress {name: {email_address}, display_name: {email_name}}) "
-                          "MERGE (email)-[:CC]->(user)",
-                          message_id=message_id,
-                          email_address=email['address'],
-                          email_name=email['name'])
+                    "MERGE (user:EmailAddress {name: {email_address}, display_name: {email_name}}) "
+                    "MERGE (email)-[:CC]->(user)",
+                    message_id=message_id,
+                    email_address=email['address'],
+                    email_name=email['name'])
         self.w2n_check_and_commit()
 
     def w2n_Message_CONTAINS_Url(self, message_id, url):
@@ -68,23 +79,23 @@ class F2n(object):
 
     def w2n_Url_BELONGS_TO_Domain(self, url, domain):
         self.tx.run("MERGE (url: Url {full_link: {url_full}, scheme: {scheme}, sub_domain: {sub}, domain: {domain}, document: {document} }) "
-                          "MERGE (domain: Domain {name: {original_domain}}) "
-                          "MERGE (url)-[:BELONGS_TO]->(domain)",
-                          url_full=url['full'],
-                          scheme=url['scheme'],
-                          sub=url['sub_domain'],
-                          domain=url['domain'],
-                          document=url['document'],
-                          original_domain=domain)
+                    "MERGE (domain: Domain {name: {original_domain}}) "
+                    "MERGE (url)-[:BELONGS_TO]->(domain)",
+                    url_full=url['full'],
+                    scheme=url['scheme'],
+                    sub=url['sub_domain'],
+                    domain=url['domain'],
+                    document=url['document'],
+                    original_domain=domain)
         self.w2n_check_and_commit()
 
     def w2n_EmailAddress_BELONGS_TO_Domain(self, email, domain):
         self.tx.run("MERGE (user:EmailAddress {name: {email_address}, display_name: {email_name}}) "
-                          "MERGE (domain: Domain {name: {original_domain}}) "
-                          "MERGE (user)-[:BELONGS_TO]->(domain)",
-                          email_address=email['address'],
-                          email_name=email['name'],
-                          original_domain=domain)
+                    "MERGE (domain: Domain {name: {original_domain}}) "
+                    "MERGE (user)-[:BELONGS_TO]->(domain)",
+                    email_address=email['address'],
+                    email_name=email['name'],
+                    original_domain=domain)
         self.w2n_check_and_commit()
 
     def w2n_Url_POSTED_BY_EmailAddress(self, url, email):
@@ -104,7 +115,8 @@ class F2n(object):
         data = []
         for key in headers.keys():
             value = u"{0}".format(headers.get(key))
-            data.append(u' {0}: \'{1}\''.format(key.replace('-','_'), value.replace("'",'"')))
+            data.append(u' {0}: \'{1}\''.format(
+                key.replace('-', '_'), value.replace("'", '"')))
 
         self.tx.run(u"MERGE (email:Message {{message_id: {{message_id}}}}) "
                     "MERGE (header:Header {{{0}}}) "
@@ -116,7 +128,8 @@ class F2n(object):
         data = []
         for key in headers.keys():
             value = u"{0}".format(headers.get(key))
-            data.append(u' {0}: \'{1}\''.format(key.replace('-','_'), value.replace("'",'"')))
+            data.append(u' {0}: \'{1}\''.format(
+                key.replace('-', '_'), value.replace("'", '"')))
 
         self.tx.run(u"MERGE (part:MessagePart {{part_id: {{part_id}}}}) "
                     "MERGE (header:Header {{{0}}}) "
@@ -173,6 +186,19 @@ class F2n(object):
                 result.add(value)
         return result
 
+    @staticmethod
+    def parse_email_date(dateStr):
+        # convert all time to UTC +0000
+        date = datetime.datetime.fromtimestamp(
+            time.mktime(email.utils.parsedate(dateStr[:-6])))
+        offsetDir = dateStr[-5]
+        offsetHours = int(dateStr[-4:-2])
+        offsetMins = int(dateStr[-2:])
+        if offsetDir == "-":
+            offsetHours = -offsetHours
+            offsetMins = -offsetMins
+        return date + datetime.timedelta(hours=offsetHours, minutes=offsetMins)
+
     def __url01_process_mime_part(self, part):
         result = set()
         if part.body:
@@ -184,7 +210,8 @@ class F2n(object):
                         if data and validators.url(data):
                             result.add(data)
                 if part.content_type.sub == 'html':
-                    tmp = self.extract_url_from_text_html(part.body.replace('\n', ''))
+                    tmp = self.extract_url_from_text_html(
+                        part.body.replace('\n', ''))
                     result.update(tmp)
         else:
             for p in part.parts:
@@ -199,13 +226,16 @@ class F2n(object):
         # mapping of email interactions, ADDRESS_HEADERS = ('From', 'To',
         # 'Delivered-To', 'Cc', 'Bcc', 'Reply-To')
         self.w2n_EmailAddress_SENT_Message(self.sender, self.message_id)
-        self.w2n_EmailAddress_BELONGS_TO_Domain(self.sender, self.sender['address'].split('@')[-1])
+        self.w2n_EmailAddress_BELONGS_TO_Domain(
+            self.sender, self.sender['address'].split('@')[-1])
         for to_email in self.receivers['to']:
             self.w2n_Message_TO_EmailAddress(self.message_id, to_email)
-            self.w2n_EmailAddress_BELONGS_TO_Domain(to_email, to_email['address'].split('@')[-1])
+            self.w2n_EmailAddress_BELONGS_TO_Domain(
+                to_email, to_email['address'].split('@')[-1])
         for cc_email in self.receivers['cc']:
             self.w2n_Message_CC_EmailAddress(self.message_id, cc_email)
-            self.w2n_EmailAddress_BELONGS_TO_Domain(cc_email, cc_email['address'].split('@')[-1])
+            self.w2n_EmailAddress_BELONGS_TO_Domain(
+                cc_email, cc_email['address'].split('@')[-1])
 
     def url01(self, msg):
         # mappings of URL in headers or message bodies
@@ -229,11 +259,41 @@ class F2n(object):
     def headers(self, msg):
         self.w2n_Message_HAS_Header(self.message_id, msg.headers)
         if msg.parts:
-            i = 1
+            stack = []
+            num = []
             for part in msg.walk():
-                part_id = msg.message_id + '-p%d'%(i)
-                self.w2n_Message_HAS_Part(msg.message_id, part_id)
+                if stack:
+                    upper_id = stack.pop()
+                    count = num.pop()
+                else:
+                    upper_id = msg.message_id
+                    count = 0
+
+                part_id = upper_id + '-{0}'.format(count)
+
+                if part.detected_content_type.value.startswith('multipart'):
+                    for j in len(part):
+                        stack.append(part_id)
+                        num.append(j)
+                self.w2n_Message_HAS_Part(upper_id, part_id)
                 self.w2n_Part_HAS_Header(part_id, part.headers)
+
+    def attachments(self, msg):
+        for part in msg.walk(with_self=True):
+            if part.is_attachment():
+                # 20150821132259_polfilm@gmail.com_<flanker-msg-guid>_<original-filename>.ext
+                d = self.parse_email_date(msg.headers['Date'])
+                filename = '{0}_{1}_{2}_{3}'.format(
+                    d.strftime("%Y%m%d%H%M%S"),
+                    self.sender['address'],
+                    msg.message_id,
+                    part.detected_file_name)
+                filepath = 'attachments/{0}/'.format(d.strftime("%Y%m"))
+                if not os.path.exists(filepath):
+                    os.makedirs(filepath)
+
+                with open(filepath + filename, 'w') as f:
+                    pass
 
     def ip01(self, msg):
         ip_found = re.findall(

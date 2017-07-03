@@ -9,7 +9,6 @@ def main():
     LAYERS = ['map01', 'url01', 'headers']
     parser = argparse.ArgumentParser(prog="")
 
-    parser.add_argument('-f', '--filename', required=True, default='')
     parser.add_argument('-d', '--dirname', required=True, default='')
     parser.add_argument('-l', '--layers', required=True)
     args = parser.parse_args()

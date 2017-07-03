@@ -6,7 +6,7 @@ import sys
 
 
 def main():
-    LAYERS = ['map01', 'url01', 'headers']
+    LAYERS = set(['map01', 'url01', 'headers'])
     parser = argparse.ArgumentParser(prog="")
 
     parser.add_argument('-d', '--dirname', required=True, default='')
@@ -17,12 +17,8 @@ def main():
         if not os.path.exists(args.dirname):
             print '[+] Directory doesn\' exist'
             sys.exit(1)
-    layers = args.layers.split(',')
-    for layer in layers:
-        for v in LAYERS:
-            if layer != v:
-                print '[+] Layer {0} doesn\'t exist'.format(layer)
-                sys.exit(1)
+    layers = set(args.layers.split(','))
+    layers = list(LAYERS.intersection(layers))
     f2n_instance = f2n.F2n(layers)
 
     for root, dirs, files in os.walk(args.dirname):

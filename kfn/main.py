@@ -6,7 +6,7 @@ import sys
 
 
 def main():
-    LAYERS = set(['map01', 'url01', 'headers'])
+    LAYERS = set(['map01', 'url01', 'headers', 'attachments'])
     parser = argparse.ArgumentParser(prog="")
 
     parser.add_argument('-d', '--dirname', required=True, default='')

@@ -272,7 +272,7 @@ class F2n(object):
                 part_id = upper_id + '-{0}'.format(count)
 
                 if part.detected_content_type.value.startswith('multipart'):
-                    for j in len(part):
+                    for j in len(part.parts):
                         stack.append(part_id)
                         num.append(j)
                 self.w2n_Message_HAS_Part(upper_id, part_id)

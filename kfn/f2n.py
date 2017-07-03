@@ -23,7 +23,7 @@ class F2n(object):
                            user=neo4j_user,
                            password=neo4j_password)
         self.processors = activate_processors_list
-        with open('config.yaml', 'r') as f:
+        with open('logger.yaml', 'r') as f:
             conf = yaml.load(f)
             logging.config.dictConfig(conf)
         self.logging = logging.getLogger('info')

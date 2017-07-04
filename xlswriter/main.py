@@ -26,7 +26,7 @@ def main():
 
     sections = [x.split() for x in args.sections.split(',')]
     if (args.perspective == 'DOMAIN'):
-        domain_handler = Domain_Handler(self.file_store_path, sections)
+        domain_handler = Domain_Handler(file_store_path, sections)
         domain_handler.process()
 
 if __name__ == '__main__':

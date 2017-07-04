@@ -19,14 +19,12 @@ def process_account(account_dir, layers):
             message_string = open(filefullname, "rb").read()
             msg = mime.from_string(message_string)
             f2n_instance.process(msg)
-        break
-
 
 def main():
     LAYERS = set(['map01', 'url01', 'headers', 'attachments'])
     parser = argparse.ArgumentParser(prog="")
 
-    parser.add_argument('-d', '--dirname', required=True, default='')
+    parser.add_argument('-d', '--dirname', required=True)
     parser.add_argument('-l', '--layers', required=True)
     args = parser.parse_args()
 

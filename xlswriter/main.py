@@ -1,7 +1,6 @@
 from domain import Domain_Handler
 import argparse
 
-
 def main():
     PERSPECTIVE_ACTIONS = ['DOMAIN', 'EMAILADDRESS']
     TRANSPORT_ACTIONS = ['QUEUE', 'FILE']
@@ -24,7 +23,7 @@ def main():
     elif(args.transport == 'FILE' and not args.file_store_path):
         parser.error('The --transport FILE requires --file_store_path')
 
-    sections = [x.split() for x in args.sections.split(',')]
+    sections = [x.strip() for x in args.sections.split(',')]
     if (args.perspective == 'DOMAIN'):
         domain_handler = Domain_Handler(args.file_store_path, sections)
         domain_handler.process()

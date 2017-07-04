@@ -19,7 +19,8 @@ def main():
             sys.exit(1)
     layers = set(args.layers.split(','))
     layers = list(LAYERS.intersection(layers))
-    f2n_instance = f2n.F2n(layers)
+
+    f2n_instance = f2n.F2n(layers, args.dirname)
 
     for root, dirs, files in os.walk(args.dirname):
         for file in files:
@@ -29,6 +30,7 @@ def main():
             message_string = open(filefullname, "rb").read()
             msg = mime.from_string(message_string)
             f2n_instance.process(msg)
+        break
 
 if __name__ == '__main__':
     main()

@@ -10,11 +10,15 @@ import logging.config
 import email.utils
 import time
 import datetime
+import os
+
+
 
 
 class F2n(object):
 
     def __init__(self, activate_processors_list,
+                 datadir,
                  neo4j_connection_string="bolt://localhost:7687",
                  neo4j_user="neo4j",
                  neo4j_password="neo4j"):
@@ -23,9 +27,19 @@ class F2n(object):
                            user=neo4j_user,
                            password=neo4j_password)
         self.processors = activate_processors_list
+        self.logs_dir = os.path.join(datadir, 'logs')
+        self.attachments_dir = os.path.join(datadir, 'attachments')
+        print self.logs_dir, self.attachments_dir
+        if not os.path.exists(self.logs_dir):
+            os.makedirs(self.logs_dir)
+        if not os.path.exists(self.attachments_dir):
+            os.makedirs(self.attachments_dir)
+
         with open('logger.yaml', 'r') as f:
             conf = yaml.load(f)
-            logging.config.dictConfig(conf)
+            conf['handlers']['info']['filename'] = os.path.join(self.logs_dir, 'import.log')
+            conf['handlers']['error']['filename'] = os.path.join(self.logs_dir, 'error.log')
+        logging.config.dictConfig(conf)
         self.logging = logging.getLogger('info')
         self.error = logging.getLogger('error')
 
@@ -139,7 +153,7 @@ class F2n(object):
 
     def w2n_Part_HAS_Part(self, parent_part_id, childrent_part_ids):
         for child_part_id in childrent_part_ids:
-            self.txt.run("MERGE (p_part:MessagePart {parent_part_id: {parent_part_id}}) "
+            self.tx.run("MERGE (p_part:MessagePart {parent_part_id: {parent_part_id}}) "
                          "MERGE (part:MessagePart {child_part_id: {child_part_id}}) "
                          "MERGE (p_part)-[:HAS]->[part]",
                          parent_part_id=parent_part_id,
@@ -272,7 +286,7 @@ class F2n(object):
                 part_id = upper_id + '-{0}'.format(count)
 
                 if part.detected_content_type.value.startswith('multipart'):
-                    for j in len(part.parts):
+                    for j in range(len(part.parts)):
                         stack.append(part_id)
                         num.append(j)
                 self.w2n_Message_HAS_Part(upper_id, part_id)
@@ -288,12 +302,12 @@ class F2n(object):
                     self.sender['address'],
                     msg.message_id,
                     part.detected_file_name)
-                filepath = 'attachments/{0}/'.format(d.strftime("%Y%m"))
+                filepath = os.path.join(self.attachments_dir, d.strftime("%Y%m"))
                 if not os.path.exists(filepath):
                     os.makedirs(filepath)
 
-                with open(filepath + filename, 'w') as f:
-                    pass
+                with open(filepath + filename, 'wb') as f:
+                    f.write(part.body)
 
     def ip01(self, msg):
         ip_found = re.findall(
@@ -337,3 +351,4 @@ class F2n(object):
 
         # commit remainder
         self.tx.commit()
+

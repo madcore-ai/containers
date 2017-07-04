@@ -15,14 +15,14 @@ handlers:
     info:
         class: logging.handlers.RotatingFileHandler
         formatter: custom_format
-        filename: 'logs/import.log'
+        filename: ''
         filters: [kfn]
         maxBytes: 1024
         backupCount: 5
     error:
         class: logging.handlers.RotatingFileHandler
         formatter: custom_format
-        filename: 'logs/error.log'
+        filename: ''
         filters: [kfn]
         maxBytes: 1024
         backupCount: 5

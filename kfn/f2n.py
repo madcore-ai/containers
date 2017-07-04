@@ -13,7 +13,6 @@ import datetime
 import os
 
 
-
 class F2n(object):
 
     def __init__(self, activate_processors_list,
@@ -204,6 +203,8 @@ class F2n(object):
 
     @staticmethod
     def parse_email_date(dateStr):
+        if dateStr.endswith('(UTC)'):
+            dateStr = dateStr[:-6]
         # convert all time to UTC +0000
         date = datetime.datetime.fromtimestamp(
             time.mktime(email.utils.parsedate(dateStr[:-6])))
@@ -308,7 +309,7 @@ class F2n(object):
                 if not os.path.exists(filepath):
                     os.makedirs(filepath)
 
-                with open(filepath + filename, 'wb') as f:
+                with open(os.path.join(filepath, filename), 'wb') as f:
                     f.write(part.body)
 
     def ip01(self, msg):

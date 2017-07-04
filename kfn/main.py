@@ -5,6 +5,23 @@ import argparse
 import sys
 
 
+def process_account(account_dir, layers):
+    if not os.path.exists(os.path.join(account_dir, 'allmail')):
+        print '[+] Directory {0} doesn\' exist'.format(os.path.join(account_dir, 'allmail'))
+        return
+    f2n_instance = f2n.F2n(layers, account_dir)
+
+    for root, dirs, files in os.walk(os.path.join(account_dir, 'allmail')):
+        for file in files:
+            filename = root.split("/")[-1] + "/" + file
+            filefullname = os.path.join(root, file)
+            print 'Reading ', filefullname
+            message_string = open(filefullname, "rb").read()
+            msg = mime.from_string(message_string)
+            f2n_instance.process(msg)
+        break
+
+
 def main():
     LAYERS = set(['map01', 'url01', 'headers', 'attachments'])
     parser = argparse.ArgumentParser(prog="")
@@ -14,24 +31,14 @@ def main():
     args = parser.parse_args()
 
     if args.dirname:
-        if not os.path.exists(args.dirname) or \
-            not os.path.exists(os.path.join(args.dirname, 'allmail')):
-                print '[+] Directory doesn\' exist'
-                sys.exit(1)
+        if not os.path.exists(args.dirname):
+            print '[+] Directory doesn\' exist'
+            sys.exit(1)
     layers = set(args.layers.split(','))
     layers = list(LAYERS.intersection(layers))
 
-    f2n_instance = f2n.F2n(layers, args.dirname)
-
-    for root, dirs, files in os.walk(os.path.join(args.dirname, 'allmail')):
-        for file in files:
-            filename = root.split("/")[-1] + "/" + file
-            filefullname = os.path.join(root, file)
-            print 'Reading ', filefullname
-            message_string = open(filefullname, "rb").read()
-            msg = mime.from_string(message_string)
-            f2n_instance.process(msg)
-        break
+    for account_dir in os.walk(args.dirname).next()[1]:
+        process_account(os.path.join(args.dirname, account_dir), layers)
 
 if __name__ == '__main__':
     main()

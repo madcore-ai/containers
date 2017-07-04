@@ -14,15 +14,16 @@ def main():
     args = parser.parse_args()
 
     if args.dirname:
-        if not os.path.exists(args.dirname):
-            print '[+] Directory doesn\' exist'
-            sys.exit(1)
+        if not os.path.exists(args.dirname) or \
+            not os.path.exists(os.path.join(args.dirname, 'allmail')):
+                print '[+] Directory doesn\' exist'
+                sys.exit(1)
     layers = set(args.layers.split(','))
     layers = list(LAYERS.intersection(layers))
 
     f2n_instance = f2n.F2n(layers, args.dirname)
 
-    for root, dirs, files in os.walk(args.dirname):
+    for root, dirs, files in os.walk(os.path.join(args.dirname, 'allmail')):
         for file in files:
             filename = root.split("/")[-1] + "/" + file
             filefullname = os.path.join(root, file)

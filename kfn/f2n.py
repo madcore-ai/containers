@@ -13,8 +13,6 @@ import datetime
 import os
 
 
-
-
 class F2n(object):
 
     def __init__(self, activate_processors_list,
@@ -29,11 +27,14 @@ class F2n(object):
         self.processors = activate_processors_list
         self.logs_dir = os.path.join(datadir, 'logs')
         self.attachments_dir = os.path.join(datadir, 'attachments')
+        self.trash_dir = os.path.join(datadir, 'err')
         print self.logs_dir, self.attachments_dir
         if not os.path.exists(self.logs_dir):
             os.makedirs(self.logs_dir)
         if not os.path.exists(self.attachments_dir):
             os.makedirs(self.attachments_dir)
+        if not os.path.exists(self.attachments_dir):
+            os.makedirs(self.trash_dir)
 
         with open('logger.yaml', 'r') as f:
             conf = yaml.load(f)

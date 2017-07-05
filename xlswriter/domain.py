@@ -1,6 +1,7 @@
 from domain_urls import Domain_Urls
 from domain_emailaddresses import Domain_EmailAddresses
-
+from domain_schemes import Domain_Schemes
+from domain_subdomains import Domain_SubDomains
 from py2neo import Graph
 import xlsxwriter
 import os
@@ -11,6 +12,8 @@ class Domain():
     def __init__(self, domain, neo4j_conn, output_path ,sections):
         self.urls = Domain_Urls(neo4j_conn, domain)
         self.email_addresses = Domain_EmailAddresses(neo4j_conn, domain)
+        self.schemes = Domain_Schemes(neo4j_conn, domain)
+        self.sub_domains = Domain_SubDomains(neo4j_conn, domain)
 
         self.sections = sections
         self.domain = domain
@@ -28,6 +31,15 @@ class Domain():
                 data[section] = []
                 for v in self.urls.get_result():
                     data[section].append(v)
+            elif section == 'Schemes':
+                data[section] = []
+                for v in self.schemes.get_result():
+                    data[section].append(v)
+            elif section == 'SubDomains':
+                data[section] = []
+                for v in self.sub_domains.get_result():
+                    data[section].append(v)
+
         return data
 
     def write_to_xls(self):

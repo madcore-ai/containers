@@ -1,5 +1,7 @@
 from domain import Domain_Handler
+from emailaddress import EmailAddress_Handler
 import argparse
+
 
 def main():
     PERSPECTIVE_ACTIONS = ['DOMAIN', 'EMAILADDRESS']
@@ -25,8 +27,10 @@ def main():
 
     sections = [x.strip() for x in args.sections.split(',')]
     if (args.perspective == 'DOMAIN'):
-        domain_handler = Domain_Handler(args.file_store_path, sections)
-        domain_handler.process()
+        handler = Domain_Handler(args.file_store_path, sections)
+    elif (args.perspective == 'EMAILADDRESS'):
+        handler = EmailAddress_Handler(args.file_store_path, sections)
+    handler.process()
 
 if __name__ == '__main__':
     main()

@@ -3,7 +3,8 @@ from emailaddress_outgoing_urls import EmailAddress_Outgoing_Urls
 from py2neo import Graph
 import xlsxwriter
 import os
-
+import logging
+from logger import Logger
 
 class EmailAddress():
 
@@ -60,12 +61,13 @@ class EmailAddress():
         pass
 
 
-class EmailAddress_Handler():
+class EmailAddress_Handler(Logger):
 
     def __init__(self, output_path, sections,
                  neo4j_connection_string="bolt://localhost:7687",
                  neo4j_user="neo4j",
                  neo4j_password="neo4j"):
+        super(self.__class__, self).__init__(self.__class__.__name__)
         self.graph = Graph(neo4j_connection_string,
                            user=neo4j_user,
                            password=neo4j_password)
@@ -77,7 +79,11 @@ class EmailAddress_Handler():
         query = "MATCH (d:EmailAddress) RETURN DISTINCT(d.name) as email_address"
         return [x['email_address'] for x in self.graph.data(query)]
 
-    def process(self):
+    def process(self, verbose):
+        if verbose:
+            for i in ['EmailAddress_Incomming_Urls', 'EmailAddress_Outgoing_Urls']:
+                logging.getLogger(i).setLevel(logging.INFO)
+
         for email_address in self.all_emails:
             d = EmailAddress(email_address, self.graph, self.output_path,self.sections)
             d.write_to_xls()

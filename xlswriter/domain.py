@@ -5,11 +5,13 @@ from domain_subdomains import Domain_SubDomains
 from py2neo import Graph
 import xlsxwriter
 import os
+import logging
+from logger import Logger
 
 
 class Domain():
 
-    def __init__(self, domain, neo4j_conn, output_path ,sections):
+    def __init__(self, domain, neo4j_conn, output_path, sections):
         self.urls = Domain_Urls(neo4j_conn, domain)
         self.email_addresses = Domain_EmailAddresses(neo4j_conn, domain)
         self.schemes = Domain_Schemes(neo4j_conn, domain)
@@ -23,7 +25,7 @@ class Domain():
     def __processor(self):
         data = {}
         for section in self.sections:
-            if section == 'Email Addresses':
+            if section == 'EmailAddresses':
                 data[section] = []
                 for v in self.email_addresses.get_result():
                     data[section].append(v)
@@ -43,7 +45,8 @@ class Domain():
         return data
 
     def write_to_xls(self):
-        output_file = os.path.join(self.output_path, 'DOMAIN_{0}.xlsx'.format(self.domain))
+        output_file = os.path.join(
+            self.output_path, 'DOMAIN_{0}.xlsx'.format(self.domain))
         workbook = xlsxwriter.Workbook(output_file)
         for section in self.data.keys():
             row = 0
@@ -72,12 +75,13 @@ class Domain():
         pass
 
 
-class Domain_Handler():
+class Domain_Handler(Logger):
 
     def __init__(self, output_path, sections,
                  neo4j_connection_string="bolt://localhost:7687",
                  neo4j_user="neo4j",
                  neo4j_password="neo4j"):
+        super(self.__class__, self).__init__(self.__class__.__name__)
         self.graph = Graph(neo4j_connection_string,
                            user=neo4j_user,
                            password=neo4j_password)
@@ -89,7 +93,11 @@ class Domain_Handler():
         query = "MATCH (d:Domain) RETURN DISTINCT(d.name) as domain"
         return [x['domain'] for x in self.graph.data(query)]
 
-    def process(self):
+    def process(self, verbose):
+        if verbose:
+            for i in ['Domain_Urls', 'Domain_EmailAddresses', 'Domain_Schemes', 'Domain_SubDomains']:
+                logging.getLogger(i).setLevel(logging.INFO)
+
         for domain in self.all_domains:
-            d = Domain(domain, self.graph, self.output_path,self.sections)
+            d = Domain(domain, self.graph, self.output_path, self.sections)
             d.write_to_xls()

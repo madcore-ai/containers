@@ -17,6 +17,7 @@ def main():
     parser.add_argument('-qs', '--queue_server', required=False, help='')
     parser.add_argument('-qn', '--queue_name', required=False, help='')
     parser.add_argument('-o', '--file_store_path', required=False)
+    parser.add_argument('-v', '--verbose', required=False, action="store_true")
     args = parser.parse_args()
 
     if (args.transport == 'QUEUE' and not args.queue_server and not args.queue_name):
@@ -30,7 +31,7 @@ def main():
         handler = Domain_Handler(args.file_store_path, sections)
     elif (args.perspective == 'EMAILADDRESS'):
         handler = EmailAddress_Handler(args.file_store_path, sections)
-    handler.process()
+    handler.process(args.verbose)
 
 if __name__ == '__main__':
     main()

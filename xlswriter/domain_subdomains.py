@@ -1,6 +1,9 @@
-class Domain_SubDomains():
+from logger import Logger
+
+class Domain_SubDomains(Logger):
 
     def __init__(self, conn, domain):
+        super(self.__class__, self).__init__(self.__class__.__name__)
         self.conn = conn
         self.domain = domain
 
@@ -8,9 +11,10 @@ class Domain_SubDomains():
     def query_string(self):
         return ('MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) '
                 'WHERE d.name = "{0}" '
-                'RETURN DISTINCE (u.sub_domain) as subdomain'.format(self.domain))
+                'RETURN DISTINCT (u.sub_domain) as subdomain'.format(self.domain))
 
     def __query(self):
+        self.logger.info(self.query_string)
         return self.conn.data(self.query_string)
 
     def get_result(self):

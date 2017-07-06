@@ -1,6 +1,10 @@
-class Domain_EmailAddresses():
+from logger import Logger
+
+
+class Domain_EmailAddresses(Logger):
 
     def __init__(self, conn, domain):
+        super(self.__class__, self).__init__(self.__class__.__name__)
         self.conn = conn
         self.domain = domain
 
@@ -11,6 +15,7 @@ class Domain_EmailAddresses():
                 'RETURN e.display_name as name, e.name as email'.format(self.domain))
 
     def __query(self):
+        self.logger.info(self.query_string)
         return self.conn.data(self.query_string)
 
     def get_result(self):

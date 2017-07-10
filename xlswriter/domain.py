@@ -13,13 +13,13 @@ import sys
 
 class Worker(Logger):
 
-    def __init__(self, conn, domain):
+    def __init__(self, conn, doc_type):
         super(self.__class__, self).__init__(self.__class__.__name__)
         self.conn = conn
-        self.domain = domain
+        self.doc_type = doc_type.lower()
 
     def build_query(self, query):
-        return query.format(self.domain)
+        return query.format(self.doc_type)
 
     def __query(self, query):
         self.logger.info(query)
@@ -29,7 +29,9 @@ class Worker(Logger):
         query = self.build_query(query)
         return self.__query(query)
 
+
 class XlsHanler():
+
     def __init__(self, filename):
         self.workbook = xlsxwriter.Workbook(filename)
         self.bold = self.workbook.add_format({'bold': True})
@@ -40,12 +42,15 @@ class XlsHanler():
         else:
             return self.workbook.add_worksheet(tab_name)
 
-    def save_data_to_tab(self, tab_name, data, row_start, col_start, horizontal=False):
+    def save_data_to_tab(self, tab_name, data, row_start, col_start, horizontal=False, autofit=False):
         row = row_start
         col = col_start
         worksheet = self.get_tab_by_name(tab_name)
         keys = data[0].keys()
+        max_column_width = 0
         for k in keys:
+            if len(k) > max_column_width:
+                max_column_width = len(k)
             worksheet.write(row, col, k, self.bold)
             if horizontal:
                 row += 1
@@ -59,6 +64,8 @@ class XlsHanler():
             col = col_start
         for v in data:
             for k in keys:
+                if len(v[k]) > max_column_width:
+                    max_column_width = len(v[k])
                 worksheet.write_string(row, col, v[k])
                 if horizontal:
                     row += 1
@@ -70,6 +77,8 @@ class XlsHanler():
             else:
                 col = col_start
                 row += 1
+        if autofit:
+            worksheet.set_column(row, col, max_column_width)
 
         return row, col
 
@@ -82,7 +91,8 @@ class Domain():
         # self.schemes = Domain_Schemes(neo4j_conn, domain)
         # self.sub_domains = Domain_SubDomains(neo4j_conn, domain)
         self.worker = Worker(neo4j_conn, domain)
-        self.xls_handler = XlsHanler(os.path.join(output_path, 'DOMAIN_{0}.xlsx'.format(domain)))
+        self.xls_handler = XlsHanler(os.path.join(
+            output_path, 'DOMAIN_{0}.xlsx'.format(domain)))
 
         self.sections = sections
         self.domain = domain
@@ -95,13 +105,21 @@ class Domain():
         row = 2
         col = 2
         gap = tab_config['gap']
+        if tab_config['orientation'] == 'horizontal':
+            hoz = True
+        else:
+            hoz = False
+
+        if tab_config['autofit'] == 'True':
+            af = True
+        else:
+            af = False
 
         for query in tab_config['queries']:
             data = self.worker.get_result(query['query'])
-            row, _ = self.xls_handler.save_data_to_tab(tab_config['name'], data, row, col)
+            row, _ = self.xls_handler.save_data_to_tab(
+                tab_config['name'], data, row, col, hoz, af)
             row += gap
-
-
 
     def __processor(self):
         data = {}
@@ -177,7 +195,6 @@ class Domain_Handler(Logger):
                     raise e
                     sys.exit(1)
 
-
     @property
     def all_domains(self):
         query = "MATCH (d:Domain) WHERE d.name = 'bitnami.com' RETURN DISTINCT(d.name) as domain"
@@ -189,5 +206,6 @@ class Domain_Handler(Logger):
                 logging.getLogger(i).setLevel(logging.INFO)
 
         for domain in self.all_domains:
-            d = Domain(domain, self.graph, self.output_path, self.sections, self.conf['tabs'])
+            d = Domain(domain, self.graph, self.output_path,
+                       self.sections, self.conf['tabs'])
             # d.write_to_xls()

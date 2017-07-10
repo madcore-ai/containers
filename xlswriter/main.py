@@ -18,7 +18,6 @@ def main():
     parser.add_argument('-qn', '--queue_name', required=False, help='')
     parser.add_argument('-o', '--file_store_path', required=False)
     parser.add_argument('-v', '--verbose', required=False, action="store_true")
-    parser.add_argument('-c', '--config_file', required=True, default='domain.yaml')
     args = parser.parse_args()
 
     if (args.transport == 'QUEUE' and not args.queue_server and not args.queue_name):
@@ -29,9 +28,9 @@ def main():
 
     sections = [x.strip() for x in args.sections.split(',')]
     if (args.perspective == 'DOMAIN'):
-        handler = Domain_Handler(args.file_store_path, sections, args.config_file)
+        handler = Domain_Handler(args.file_store_path, sections, 'perspectives/DOMAIN.yaml')
     elif (args.perspective == 'EMAILADDRESS'):
-        handler = EmailAddress_Handler(args.file_store_path, sections)
+        handler = EmailAddress_Handler(args.file_store_path, sections, 'perspectives/EMAIL.yaml')
     handler.process(args.verbose)
 
 if __name__ == '__main__':

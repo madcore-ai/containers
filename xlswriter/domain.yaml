@@ -1,0 +1,40 @@
+doc:
+    type: DOMAIN
+    format: xls
+
+tabs:
+    - name: EmailAddress
+      header: plain
+      gap: 2
+      orientation: vertial
+      autofit: false
+      queries:
+          - title: Domain_EmailAddress
+            query: MATCH (e:EmailAddress)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{0}" RETURN e.display_name as name, e.name as email
+            show_labels: true
+          # - title: Domain_Schemes
+          #   query: MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{0}" RETURN DISTINCT (u.scheme) as scheme
+          #   show_labels: true
+          # - title: Domain_SubDomains
+          #   query: MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{0}" RETURN DISTINCT (u.sub_domain) as subdomain
+          #   show_labels: false
+
+    - name: Scheme
+      header: full
+      gap: 2
+      orientation: horizontal
+      autofit: true
+      queries:
+          - title: name of query
+            query: MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{0}" RETURN DISTINCT (u.scheme) as scheme
+            show_labels: false
+
+    - name: SubDomain
+      header: full
+      gap: 2
+      orientation: horizontal
+      autofit: true
+      queries:
+          - title: Sub Domains
+            query: MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{0}" RETURN DISTINCT (u.sub_domain) as subdomain
+            show_labels: true

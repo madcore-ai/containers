@@ -22,6 +22,15 @@ tabs:
           - title: Urls
             query: MATCH (e:EmailAddress)-[:SENT]->(m:Message), (m)-[:CONTAINS]->(u:Url) WHERE e.name = "{email_address}" RETURN u.full_link as url
             show_labels: false
+    - name: Outgoing Addresses
+      header: full
+      gap: 2
+      orientation: vertical
+      autofit: true
+      queries:
+          - title: OutAddr
+            query: MATCH (ea:EmailAddress)-[:SENT]-> (m:Message)-[:TO]->(t) WHERE ea.name = "{email_address}" RETURN DISTINCT t.name
+            show_labels: true
 
 
 

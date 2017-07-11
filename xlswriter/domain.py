@@ -117,6 +117,8 @@ class Domain():
 
         for query in tab_config['queries']:
             data = self.worker.get_result(query['query'])
+            if not data:
+                continue
             row, _ = self.xls_handler.save_data_to_tab(
                 tab_config['name'], data, row, col, hoz, af)
             row += gap

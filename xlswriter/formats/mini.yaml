@@ -1,0 +1,8 @@
+header:
+  bold: True
+  font_size: 16
+  font_name: Consolas
+  border: 2
+
+cell:
+  bold: False

@@ -6,7 +6,7 @@ tabs:
     - name: EmailAddress
       header: plain
       gap: 2
-      orientation: vertial
+      orientation: horizontal
       autofit: true
       queries:
           - title: EmailAddress from Domain
@@ -16,7 +16,7 @@ tabs:
     - name: Scheme
       header: full
       gap: 2
-      orientation: vertial
+      orientation: horizontal
       autofit: true
       queries:
           - title: Domain Scheme
@@ -26,7 +26,7 @@ tabs:
     - name: SubDomain
       header: full
       gap: 2
-      orientation: vertial
+      orientation: vertical
       autofit: true
       queries:
           - title: Sub Domains of Domain
@@ -36,7 +36,7 @@ tabs:
     - name: Urls
       header: full
       gap: 2
-      orientation: vertial
+      orientation: horizontal
       autofit: true
       queries:
           - title: Urls Belong to Domain

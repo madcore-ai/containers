@@ -22,21 +22,21 @@ class Domain():
             self.tab_handler(tab_config)
 
     def tab_handler(self, tab_config):
-        row = 2
-        col = 2
+        row = 0
+        col = 0
         gap = tab_config['gap']
-        if tab_config['orientation'] == 'horizontal':
-            hoz = True
+        if tab_config['orientation'] == 'vertical':
+            vt = True
         else:
-            hoz = False
+            vt = False
 
         for query in tab_config['queries']:
             data = self.worker.get_result(query['query'])
             if not data:
                 continue
             row, col = self.xls_handler.save_data_to_tab(
-                tab_config['name'], data, row, col, hoz, tab_config['autofit'])
-            if hoz:
+                tab_config['name'], data, row, col, vt, tab_config['autofit'])
+            if vt:
                 col += gap
                 row = 2
             else:

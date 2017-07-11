@@ -6,7 +6,7 @@ tabs:
     - name: Incomming Url
       header: plain
       gap: 2
-      orientation: vertial
+      orientation: vertical
       autofit: true
       queries:
           - title: Urls
@@ -16,7 +16,7 @@ tabs:
     - name: Outgoing Url
       header: full
       gap: 2
-      orientation: vertial
+      orientation: vertical
       autofit: true
       queries:
           - title: Urls

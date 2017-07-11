@@ -26,9 +26,9 @@ def main():
         parser.error('The --transport FILE requires --file_store_path')
 
     if (args.perspective == 'DOMAIN'):
-        handler = Domain_Handler(args.file_store_path, 'perspectives/DOMAIN.yaml')
+        handler = Domain_Handler(args.file_store_path)
     elif (args.perspective == 'EMAILADDRESS'):
-        handler = EmailAddress_Handler(args.file_store_path, 'perspectives/EMAIL.yaml')
+        handler = EmailAddress_Handler(args.file_store_path)
     handler.process(args.verbose)
 
 if __name__ == '__main__':

@@ -7,34 +7,38 @@ tabs:
       header: plain
       gap: 2
       orientation: vertial
-      autofit: false
+      autofit: true
       queries:
-          - title: Domain_EmailAddress
-            query: MATCH (e:EmailAddress)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{0}" RETURN e.display_name as name, e.name as email
+          - title: EmailAddress from Domain
+            query: MATCH (e:EmailAddress)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{domain}" RETURN e.display_name as name, e.name as email
             show_labels: true
-          # - title: Domain_Schemes
-          #   query: MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{0}" RETURN DISTINCT (u.scheme) as scheme
-          #   show_labels: true
-          # - title: Domain_SubDomains
-          #   query: MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{0}" RETURN DISTINCT (u.sub_domain) as subdomain
-          #   show_labels: false
 
     - name: Scheme
       header: full
       gap: 2
-      orientation: horizontal
+      orientation: vertial
       autofit: true
       queries:
-          - title: name of query
-            query: MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{0}" RETURN DISTINCT (u.scheme) as scheme
+          - title: Domain Scheme
+            query: MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{domain}" RETURN DISTINCT (u.scheme) as scheme
             show_labels: false
 
     - name: SubDomain
       header: full
       gap: 2
-      orientation: horizontal
+      orientation: vertial
       autofit: true
       queries:
-          - title: Sub Domains
-            query: MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{0}" RETURN DISTINCT (u.sub_domain) as subdomain
+          - title: Sub Domains of Domain
+            query: MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{domain}" RETURN DISTINCT (u.sub_domain) as subdomain
+            show_labels: true
+
+    - name: Urls
+      header: full
+      gap: 2
+      orientation: vertial
+      autofit: true
+      queries:
+          - title: Urls Belong to Domain
+            query: MATCH (u:Url)-[:BELONGS_TO]->(d:Domain) WHERE d.name = "{domain}" RETURN u.full_link as url
             show_labels: true

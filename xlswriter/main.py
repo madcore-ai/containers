@@ -11,7 +11,6 @@ def main():
 
     parser.add_argument('-p', '--perspective', required=True,
                         choices=PERSPECTIVE_ACTIONS)
-    parser.add_argument('-s', '--sections', required=True, default='')
     parser.add_argument('-t', '--transport', required=True,
                         choices=TRANSPORT_ACTIONS)
     parser.add_argument('-qs', '--queue_server', required=False, help='')
@@ -26,11 +25,10 @@ def main():
     elif(args.transport == 'FILE' and not args.file_store_path):
         parser.error('The --transport FILE requires --file_store_path')
 
-    sections = [x.strip() for x in args.sections.split(',')]
     if (args.perspective == 'DOMAIN'):
-        handler = Domain_Handler(args.file_store_path, sections, 'perspectives/DOMAIN.yaml')
+        handler = Domain_Handler(args.file_store_path, 'perspectives/DOMAIN.yaml')
     elif (args.perspective == 'EMAILADDRESS'):
-        handler = EmailAddress_Handler(args.file_store_path, sections, 'perspectives/EMAIL.yaml')
+        handler = EmailAddress_Handler(args.file_store_path, 'perspectives/EMAIL.yaml')
     handler.process(args.verbose)
 
 if __name__ == '__main__':

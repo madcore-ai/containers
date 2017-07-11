@@ -85,7 +85,7 @@ class XlsHanler():
 
 class Domain():
 
-    def __init__(self, domain, neo4j_conn, output_path, sections, conf):
+    def __init__(self, domain, neo4j_conn, output_path, conf):
         # self.urls = Domain_Urls(neo4j_conn, domain)
         # self.email_addresses = Domain_EmailAddresses(neo4j_conn, domain)
         # self.schemes = Domain_Schemes(neo4j_conn, domain)
@@ -94,7 +94,6 @@ class Domain():
         self.xls_handler = XlsHanler(os.path.join(
             output_path, 'DOMAIN_{0}.xlsx'.format(domain)))
 
-        self.sections = sections
         self.domain = domain
         self.output_path = output_path
         for tab_config in conf:
@@ -123,52 +122,6 @@ class Domain():
                 tab_config['name'], data, row, col, hoz, af)
             row += gap
 
-    def __processor(self):
-        data = {}
-        for section in self.sections:
-            if section == 'EmailAddresses':
-                data[section] = []
-                for v in self.email_addresses.get_result():
-                    data[section].append(v)
-            elif section == 'Urls':
-                data[section] = []
-                for v in self.urls.get_result():
-                    data[section].append(v)
-            elif section == 'Schemes':
-                data[section] = []
-                for v in self.schemes.get_result():
-                    data[section].append(v)
-            elif section == 'SubDomains':
-                data[section] = []
-                for v in self.sub_domains.get_result():
-                    data[section].append(v)
-
-        return data
-
-    def write_to_xls(self):
-        output_file = os.path.join(
-            self.output_path, 'DOMAIN_{0}.xlsx'.format(self.domain))
-        workbook = xlsxwriter.Workbook(output_file)
-        for section in self.data.keys():
-            row = 0
-            col = 0
-            worksheet = workbook.add_worksheet(section)
-            if self.data[section]:
-                keys = self.data[section][0].keys()
-                for k in keys:
-                    worksheet.write(row, col, k)
-                    col += 1
-                col = 0
-                row = 1
-                for v in self.data[section]:
-                    for k in keys:
-                        worksheet.write_string(row, col, v[k])
-                        col += 1
-                    col = 0
-                    row += 1
-
-        workbook.close()
-
     def in_json_format(self):
         pass
 
@@ -178,7 +131,7 @@ class Domain():
 
 class Domain_Handler(Logger):
 
-    def __init__(self, output_path, sections,
+    def __init__(self, output_path,
                  config_file=None,
                  neo4j_connection_string="bolt://localhost:7687",
                  neo4j_user="neo4j",
@@ -187,7 +140,6 @@ class Domain_Handler(Logger):
         self.graph = Graph(neo4j_connection_string,
                            user=neo4j_user,
                            password=neo4j_password)
-        self.sections = sections
         self.output_path = os.path.abspath(output_path)
         if config_file:
             with open(config_file, 'r') as f:
@@ -204,10 +156,8 @@ class Domain_Handler(Logger):
 
     def process(self, verbose):
         if verbose:
-            for i in ['Domain_Urls', 'Domain_EmailAddresses', 'Domain_Schemes', 'Domain_SubDomains']:
+            for i in ['Worker']:
                 logging.getLogger(i).setLevel(logging.INFO)
 
         for domain in self.all_domains:
-            d = Domain(domain, self.graph, self.output_path,
-                       self.sections, self.conf['tabs'])
-            # d.write_to_xls()
+            d = Domain(domain, self.graph, self.output_path, self.conf['tabs'])

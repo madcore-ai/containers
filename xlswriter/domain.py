@@ -72,7 +72,7 @@ class Domain_Handler(Logger):
 
     @property
     def all_domains(self):
-        query = "MATCH (d:Domain) WHERE d.name = 'bitnami.com' RETURN DISTINCT(d.name) as domain"
+        query = "MATCH (d:Domain) RETURN DISTINCT(d.name) as domain"
         return [x['domain'] for x in self.graph.data(query)]
 
     def process(self, verbose):

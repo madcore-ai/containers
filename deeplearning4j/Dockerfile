@@ -14,8 +14,12 @@ RUN echo 'export LD_PRELOAD=/lib64/libgomp.so.1' >> /etc/profile.d/mkl.sh
 RUN echo 'source /opt/rh/devtoolset-4/enable' >> /etc/profile.d/softwarecollections.sh && chmod +x /etc/profile.d/softwarecollections.sh
 
 RUN yum -y groupinstall "Development Tools"
-ADD install_openblas.sh /opt/install_openblas.sh
-RUN chmod +x /opt/install_openblas.sh && /opt/install_openblas.sh
+RUN git clone https://github.com/xianyi/OpenBLAS.git
+RUN cd OpenBLAS && \
+    make && \
+    make PREFIX=/opt/OpenBLAS install
+RUN cp /opt/OpenBLAS/lib/libopenblas.so /opt/OpenBLAS/lib/liblapack.so.3
+RUN cp /opt/OpenBLAS/lib/libopenblas.so /opt/OpenBLAS/lib/libblas.so.3
 
 ADD https://s3-us-west-2.amazonaws.com/skil-distro/apache-maven-3.3.9-bin.tar.gz apache-maven-3.3.9-bin.tar.gz
 RUN tar xvf apache-maven-3.3.9-bin.tar.gz && rm -f apache-maven-3.3.9-bin.tar.gz && mv apache-maven-* /opt/mvn
@@ -25,10 +29,14 @@ RUN tar xvf cmake-3.5.2-Linux-x86_64.tar.gz && mv cmake-3.5.2-Linux-x86_64 /opt/
 
 
 RUN echo "SETTING UP JAVA"
-RUN wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u91-b14/jdk-8u91-linux-x64.tar.gz"
-RUN tar xzvf jdk-8u91-linux-x64.tar.gz
-RUN mv jdk1.8.0_91 /opt
-ENV JAVA_HOME /opt/jdk1.8.0_91/
+RUN wget --no-cookies \                                                                                              
+    --no-check-certificate \
+    --header "Cookie: oraclelicense=accept-securebackup-cookie" \
+    "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz" \   
+    -O jdk-8u131-linux-x64.tar.gz
+RUN tar xzvf jdk-8u131-linux-x64.tar.gz
+RUN mv jdk1.8.0_131 /opt
+ENV JAVA_HOME /opt/jdk1.8.0_131/
 RUN echo "SETTING UP MAVEN"
 
 RUN ln -s /opt/mvn/bin/mvn /usr/bin/mvn

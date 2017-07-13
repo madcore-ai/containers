@@ -91,7 +91,7 @@ class Domain_Handler(Logger):
 
     @property
     def all_domains(self):
-        query = "MATCH (d:Domain) WHERE d.name = 'bitnami.com' RETURN DISTINCT(d.name) as domain"
+        query = "MATCH (d:Domain) RETURN DISTINCT(d.name) as domain"
         return [x['domain'] for x in self.graph.data(query)]
 
     def process(self, verbose, transport):
@@ -103,5 +103,5 @@ class Domain_Handler(Logger):
             if transport == 'FILE':
                 d = Domain_to_XLSX(domain, self.graph, self.output_path, self.conf['tabs'])
             elif transport == 'QUEUE':
-                d = Domain_to_Kafka(domain, self.graph, 'kafka-kf.kafka.svc.cluster.local:9092', self.conf['tabs'])
+                d = Domain_to_Kafka(domain, self.graph, 'localhost:9092', self.conf['tabs'])
 

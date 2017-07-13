@@ -2,6 +2,7 @@ from py2neo import Graph
 from logger import Logger
 from processor import Worker
 from xlsxhandler import XlsHanler
+from kafka import KafkaProducer
 import xlsxwriter
 import os
 import logging
@@ -9,7 +10,7 @@ import yaml
 import sys
 
 
-class Domain():
+class Domain_to_XLSX():
 
     def __init__(self, domain, neo4j_conn, output_path, conf):
         self.worker = Worker(neo4j_conn, domain=domain)
@@ -44,11 +45,28 @@ class Domain():
                 row += gap
                 col = 0
 
-    def in_json_format(self):
-        pass
+class Domain_to_Kafka():
 
-    def in_yaml_format(self):
-        pass
+    def __init__(self, domain, neo4j_conn, kafka_server, conf):
+        self.worker = Worker(neo4j_conn, domain=domain)
+
+        self.domain = domain
+        self.topic = conf['doc']['type']
+        self.producer = self.connect_kafka(kafka_server)
+        for config in conf:
+            self.kafka_handler(config)
+
+    def connect_kafka(self, server):
+        return KafkaProducer(bootstrap_servers=server)
+
+    def kafka_handler(self, config):
+        for query in config['queries']:
+            data = self.worker.get_result(query['query'])
+            if data:
+                keys = data[0].keys()
+                for v in data:
+                    for k in keys:
+                        self.producer.send(self.topic, k, v[k])
 
 
 class Domain_Handler(Logger):
@@ -76,10 +94,14 @@ class Domain_Handler(Logger):
         query = "MATCH (d:Domain) WHERE d.name = 'bitnami.com' RETURN DISTINCT(d.name) as domain"
         return [x['domain'] for x in self.graph.data(query)]
 
-    def process(self, verbose):
+    def process(self, verbose, transport):
         if verbose:
             for i in ['Worker']:
                 logging.getLogger(i).setLevel(logging.INFO)
 
         for domain in self.all_domains:
-            d = Domain(domain, self.graph, self.output_path, self.conf['tabs'])
+            if transport == 'FILE':
+                d = Domain_to_XLSX(domain, self.graph, self.output_path, self.conf['tabs'])
+            elif transport == 'QUEUE':
+                d = Domain_to_Kafka(domain, self.graph, 'kafka-kf.kafka.svc.cluster.local:9092', self.conf['tabs'])
+

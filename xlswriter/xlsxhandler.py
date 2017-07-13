@@ -17,16 +17,27 @@ class XlsHanler():
         else:
             return self.workbook.add_worksheet(tab_name)
 
-    def save_data_to_tab(self, tab_name, data, row_start, col_start, vertical=False, autofit=False):
+    def save_data_to_tab(self, tab_name, title, data, row_start, col_start, vertical=False, autofit=False):
         row = row_start
         col = col_start
         worksheet = self.get_tab_by_name(tab_name)
+
+        worksheet.write(row, col, title, self.header_format)
+
+        if vertical:
+            row_start = row + 2
+            row += 2
+        else:
+            row_start = row + 2
+            row += 2
+
+
         keys = data[0].keys()
         max_column_width = 0
         for k in keys:
             if len(k) > max_column_width:
                 max_column_width = len(k)
-            worksheet.write(row, col, k, self.header_format)
+            worksheet.write(row, col, k, self.cell_format)
             if vertical:
                 row += 1
             else:
@@ -41,7 +52,7 @@ class XlsHanler():
             for k in keys:
                 if len(v[k]) > max_column_width:
                     max_column_width = len(v[k])
-                worksheet.write_string(row, col, v[k])
+                worksheet.write_string(row, col, v[k], self.cell_format)
                 if vertical:
                     row += 1
                 else:
@@ -54,7 +65,7 @@ class XlsHanler():
                 row += 1
         if autofit:
             worksheet.set_column(row, col, max_column_width)
-            print row, col, max_column_width
+            # print row, col, max_column_width
 
         return row, col
 

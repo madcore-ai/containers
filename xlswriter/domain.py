@@ -32,16 +32,17 @@ class Domain():
 
         for query in tab_config['queries']:
             data = self.worker.get_result(query['query'])
+            title = query['title']
             if not data:
                 continue
             row, col = self.xls_handler.save_data_to_tab(
-                tab_config['name'], data, row, col, vt, tab_config['autofit'])
+                tab_config['name'], title, data, row, col, vt, tab_config['autofit'])
             if vt:
                 col += gap
-                row = 2
+                row = 0
             else:
                 row += gap
-                col = 2
+                col = 0
 
     def in_json_format(self):
         pass
@@ -72,7 +73,7 @@ class Domain_Handler(Logger):
 
     @property
     def all_domains(self):
-        query = "MATCH (d:Domain) RETURN DISTINCT(d.name) as domain"
+        query = "MATCH (d:Domain) WHERE d.name = 'bitnami.com' RETURN DISTINCT(d.name) as domain"
         return [x['domain'] for x in self.graph.data(query)]
 
     def process(self, verbose):

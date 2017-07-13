@@ -25,6 +25,7 @@ class EmailAddress():
         row = 0
         col = 0
         gap = tab_config['gap']
+
         if tab_config['orientation'] == 'vertical':
             vt = True
         else:
@@ -32,16 +33,17 @@ class EmailAddress():
 
         for query in tab_config['queries']:
             data = self.worker.get_result(query['query'])
+            title = query['title'].format(email_address=self.email_address)
             if not data:
                 continue
             row, col = self.xls_handler.save_data_to_tab(
-                tab_config['name'], data, row, col, vt, tab_config['autofit'])
+                tab_config['name'], title, data, row, col, vt, tab_config['autofit'])
             if vt:
                 col += gap
-                row = 2
+                row = 0
             else:
                 row += gap
-                col = 2
+                col = 0
 
 
 class EmailAddress_Handler(Logger):

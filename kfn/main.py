@@ -1,4 +1,3 @@
-from flanker import mime
 import os
 import f2n
 import argparse
@@ -16,9 +15,7 @@ def process_account(account_dir, layers):
             filename = root.split("/")[-1] + "/" + file
             filefullname = os.path.join(root, file)
             print 'Reading ', filefullname
-            message_string = open(filefullname, "rb").read()
-            msg = mime.from_string(message_string)
-            f2n_instance.process(msg)
+            f2n_instance.process(filefullname)
 
 def main():
     LAYERS = set(['map01', 'url01', 'headers', 'attachments'])

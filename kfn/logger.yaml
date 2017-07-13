@@ -2,11 +2,7 @@ version: 1
 
 formatters:
     custom_format:
-        format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-
-filters:
-    kfn:
-        name: kfn
+        format: "%(asctime)s - %(levelname)s - %(message)s"
 
 handlers:
     console:
@@ -16,14 +12,12 @@ handlers:
         class: logging.handlers.RotatingFileHandler
         formatter: custom_format
         filename: ''
-        filters: [kfn]
         maxBytes: 1024
         backupCount: 5
     error:
         class: logging.handlers.RotatingFileHandler
         formatter: custom_format
         filename: ''
-        filters: [kfn]
         maxBytes: 1024
         backupCount: 5
 

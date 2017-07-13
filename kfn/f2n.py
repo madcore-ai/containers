@@ -3,6 +3,7 @@ import re
 import validators
 from lxml import html
 from flanker.addresslib import address
+from flanker import mime
 import tldextract
 import yaml
 import logging
@@ -11,6 +12,7 @@ import email.utils
 import time
 import datetime
 import os
+
 
 
 class F2n(object):
@@ -169,8 +171,6 @@ class F2n(object):
                     part_id=part_id)
         self.w2n_check_and_commit()
 
-    # def w2n_
-
     @staticmethod
     def extract_url_from_text_plain(string):
         regex = r'('
@@ -199,7 +199,7 @@ class F2n(object):
         for value in tree.xpath("//@href"):
             if validators.url(value):
                 result.add(value)
-        return result
+        return result.rstrip('/>')
 
     @staticmethod
     def parse_email_date(dateStr):
@@ -225,7 +225,7 @@ class F2n(object):
                         data, _, _, _, _, _ = self.extract_url_from_text_plain(
                             line)
                         if data and validators.url(data):
-                            result.add(data)
+                            result.add(data.rstrip('/>'))
                 if part.content_type.sub == 'html':
                     tmp = self.extract_url_from_text_html(
                         part.body.replace('\n', ''))
@@ -317,7 +317,12 @@ class F2n(object):
             r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})', msg.to_string())
         pass
 
-    def process(self, msg):
+    def process(self, filename):
+        self.filename = filename
+        with open(filename, "rb") as f:
+            msg = mime.from_string(f.read())
+        self.logging.info('Start working on {0}'.format(filename))
+
         # count how many time connect to neo4j
         self.count = 0
         # initialize message basic information
@@ -349,9 +354,14 @@ class F2n(object):
 
         self.tx = self.graph.begin()
 
-        for func in self.processors:
-            getattr(self, func)(msg)
-
-        # commit remainder
-        self.tx.commit()
+        try:
+            for func in self.processors:
+                self.logging.info('\t Start layer: {0}'.format(func))
+                getattr(self, func)(msg)
+                self.logging.info('\t End layer: {0}'.format(func))
+        except:
+            pass
+        finally:
+            # commit remainder
+            self.tx.commit()
 

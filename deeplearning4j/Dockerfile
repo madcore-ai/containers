@@ -4,7 +4,8 @@ FROM nvidia/cuda:8.0-cudnn5-devel-centos7
 RUN  yum-config-manager --enable rhel-server-rhscl-7-rpms
 RUN yum -y install wget epel-release pciutils kernel-devel-"$(uname -r)" kernel-headers-"$(uname -r)" dkms perl
 RUN yum -y install centos-release-scl git
-RUN yum -y install devtoolset-4-toolchain 
+RUN yum -y install devtoolset-4-toolchain
+RUN yum -y install atlas-devel 
 RUN scl enable devtoolset-4 bash
 
 
@@ -57,7 +58,7 @@ RUN ldconfig
 #ENV PATH $PATH:/usr/local/cuda-8.0/bin
 RUN git clone https://github.com/deeplearning4j/libnd4j /opt/libnd4j
 RUN cd /opt/libnd4j && ./buildnativeoperations.sh -c cuda
-RUN cd /opt/libnd4j && ./buildnativeoperations.sh
+#RUN cd /opt/libnd4j && ./buildnativeoperations.sh
 ENV LIBND4J_HOME /opt/libnd4j/
 
 RUN rm -rf /opt/nd4j && git clone --depth 1 https://github.com/deeplearning4j/nd4j /opt/nd4j

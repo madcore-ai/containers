@@ -5,7 +5,7 @@ RUN  yum-config-manager --enable rhel-server-rhscl-7-rpms
 RUN yum -y install wget epel-release pciutils kernel-devel-"$(uname -r)" kernel-headers-"$(uname -r)" dkms perl
 RUN yum -y install centos-release-scl git
 RUN yum -y install devtoolset-4-toolchain
-RUN yum -y install atlas-devel 
+RUN yum -y install atlas-devel
 RUN scl enable devtoolset-4 bash
 
 
@@ -30,10 +30,10 @@ RUN tar xvf cmake-3.5.2-Linux-x86_64.tar.gz && mv cmake-3.5.2-Linux-x86_64 /opt/
 
 
 RUN echo "SETTING UP JAVA"
-RUN wget --no-cookies \                                                                                              
+RUN wget --no-cookies \
     --no-check-certificate \
     --header "Cookie: oraclelicense=accept-securebackup-cookie" \
-    "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz" \   
+    "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz" \
     -O jdk-8u131-linux-x64.tar.gz
 RUN tar xzvf jdk-8u131-linux-x64.tar.gz
 RUN mv jdk1.8.0_131 /opt
@@ -44,8 +44,8 @@ RUN ln -s /opt/mvn/bin/mvn /usr/bin/mvn
 #Ensure that the right gcc/g++ is being used for centos
 ENV CC /opt/rh/devtoolset-4/root/usr/bin/gcc
 ENV CXX /opt/rh/devtoolset-4/root/usr/bin/g++
-RUN rm /usr/bin/g++ && ln -s  /opt/rh/devtoolset-4/root/usr/bin/g++ /usr/bin/g++
-RUN rm /usr/bin/gcc && ln -s  /opt/rh/devtoolset-4/root/usr/bin/gcc  /usr/bin/gcc
+RUN rm -f /usr/bin/g++ && ln -s  /opt/rh/devtoolset-4/root/usr/bin/g++ /usr/bin/g++
+RUN rm -f /usr/bin/gcc && ln -s  /opt/rh/devtoolset-4/root/usr/bin/gcc  /usr/bin/gcc
 
 ENV PATH $PATH:/opt/cmake/bin:$JAVA_HOME/bin:/opt/mvn/bin
 
@@ -61,8 +61,8 @@ RUN cd /opt/libnd4j && ./buildnativeoperations.sh -c cuda
 #RUN cd /opt/libnd4j && ./buildnativeoperations.sh
 ENV LIBND4J_HOME /opt/libnd4j/
 
-RUN rm -rf /opt/nd4j && git clone --depth 1 https://github.com/deeplearning4j/nd4j /opt/nd4j
-RUN cd /opt/nd4j && ./buildmultiplescalaversions.sh clean install -DskipTests -Dmaven.javadoc.skip=true
+#RUN rm -rf /opt/nd4j && git clone --depth 1 https://github.com/deeplearning4j/nd4j /opt/nd4j
+#RUN cd /opt/nd4j && ./buildmultiplescalaversions.sh clean install -DskipTests -Dmaven.javadoc.skip=true
 
 RUN rm -rf /opt/DataVec && git clone https://github.com/deeplearning4j/DataVec /opt/DataVec
 RUN cd /opt/DataVec  && chmod +x ./change-scala-versions.sh && ./buildmultiplescalaversions.sh  clean install -DskipTests
@@ -72,6 +72,3 @@ RUN cd /opt/deeplearning4j && chmod +x ./change-scala-versions.sh && cd /opt/dee
 
 RUN rm -rf /opt/Arbiter && git clone https://github.com/deeplearning4j/Arbiter /opt/Arbiter
 RUN cd /opt/Arbiter  && chmod +x ./change-scala-versions.sh && ./buildmultiplescalaversions.sh  clean install -DskipTests
-
-
-

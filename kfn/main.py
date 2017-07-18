@@ -18,7 +18,7 @@ def process_account(account_dir, layers):
             f2n_instance.process(filefullname)
 
 def main():
-    LAYERS = set(['map01', 'url01', 'headers', 'attachments'])
+    LAYERS = set(['map01', 'url01', 'headers', 'attachments', 'time'])
     parser = argparse.ArgumentParser(prog="")
 
     parser.add_argument('-d', '--dirname', required=True)

@@ -14,7 +14,6 @@ import datetime
 import os
 
 
-
 class F2n(object):
 
     def __init__(self, activate_processors_list,
@@ -171,6 +170,15 @@ class F2n(object):
                     part_id=part_id)
         self.w2n_check_and_commit()
 
+    def w2n_Message_OCCUR_Time(self, message_id, time_info):
+        self.tx.run("MERGE (email:Message {message_id: {message_id}}) "
+                    "MERGE (time:Time {iso: {time_iso}, timestamp: {time_ts}}) "
+                    "MERGE (email)-[:OCCUR]->(part)",
+                    message_id=message_id,
+                    time_iso=time_info['time_iso'],
+                    time_ts=time_info['time_ts'])
+        self.w2n_check_and_commit()
+
     @staticmethod
     def extract_url_from_text_plain(string):
         regex = r'('
@@ -311,6 +319,13 @@ class F2n(object):
 
                 with open(os.path.join(filepath, filename), 'wb') as f:
                     f.write(part.body)
+
+    def time(self, msg):
+        d = self.parse_email_date(msg.headers['Date'])
+        time_info = {}
+        time_info['time_iso'] = d.isoformat()
+        time_info['time_ts'] = d.strftime("%s")
+        self.w2n_Message_OCCUR_Time(self.message_id, data)
 
     def ip01(self, msg):
         ip_found = re.findall(

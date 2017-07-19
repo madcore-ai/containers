@@ -173,7 +173,7 @@ class F2n(object):
     def w2n_Message_OCCUR_Time(self, message_id, time_info):
         self.tx.run("MERGE (email:Message {message_id: {message_id}}) "
                     "MERGE (time:Time {iso: {time_iso}, timestamp: {time_ts}}) "
-                    "MERGE (email)-[:OCCUR]->(part)",
+                    "MERGE (email)-[:OCCUR]->(time)",
                     message_id=message_id,
                     time_iso=time_info['time_iso'],
                     time_ts=time_info['time_ts'])
@@ -325,7 +325,7 @@ class F2n(object):
         time_info = {}
         time_info['time_iso'] = d.isoformat()
         time_info['time_ts'] = d.strftime("%s")
-        self.w2n_Message_OCCUR_Time(self.message_id, data)
+        self.w2n_Message_OCCUR_Time(self.message_id, time_info)
 
     def ip01(self, msg):
         ip_found = re.findall(

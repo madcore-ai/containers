@@ -1,0 +1,14 @@
+doc:
+    type: HEADER
+    format: xls
+
+tabs:
+    - name: Information
+      header: plain
+      gap: 2
+      orientation: horizontal
+      autofit: true
+      queries:
+          - title: All Header
+            query: MATCH (h:Header) WHERE h.Message_Id = "<{message_id}>" RETURN h as header
+            show_labels: true

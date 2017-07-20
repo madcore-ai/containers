@@ -9,7 +9,7 @@ app.secret_key = 'development'
 google_status = False
 git_status = False
 try:
-    with open("/apps/gmail.yaml", 'r') as stream:
+    with open("/opt/credcollect/apps/gmail.yaml", 'r') as stream:
         try:
             read_data = yaml.load(stream)['app']
         except yaml.YAMLError as exc:
@@ -37,7 +37,7 @@ try:
     except:
         pass
     try:
-        with open("/apps/github.yaml", 'r') as stream:
+        with open("/opt/credcollect/apps/github.yaml", 'r') as stream:
             try:
                 read_data = yaml.load(stream)['app']
             except yaml.YAMLError as exc:
@@ -79,7 +79,7 @@ def index():
             me = git.get('user')
             write_data = {'user': {'access_token':resp['access_token'],\
                      'madcore_guid':me.data['id'],'email':me.data['email']}}
-            with open('/user/github/%s.yaml' %me.data['id'], 'w') as outfile:
+            with open('/opt/credcollect/users/gmail/%s.yaml' %me.data['id'], 'w') as outfile:
                 yaml.safe_dump(write_data, outfile, default_flow_style=False)
             return render_template('index.html',message="Successfully logged in",google_status=False,git_status=False)
         except:
@@ -87,7 +87,7 @@ def index():
             me = google.get('userinfo')
             write_data = {'user': {'oauth2_refresh_token':resp['refresh_token'],\
                      'madcore_guid':me.data['id'],'email':me.data['email']}}
-            with open('/user/gmail/%s.yaml' %me.data['id'], 'w') as outfile:
+            with open('/opt/credcollect/users/gmail/%s.yaml' %me.data['id'], 'w') as outfile:
                 yaml.safe_dump(write_data, outfile, default_flow_style=False)
             return render_template('index.html',message="Successfully logged in",google_status=False,git_status=False)
     except:

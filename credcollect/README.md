@@ -17,4 +17,4 @@ Callback URL:
 - gmail
     http://api.solve.zone/authorize/google/
 - github
-    http://api.solve.zone/authorize/google/
+    http://api.solve.zone/authorize/github/

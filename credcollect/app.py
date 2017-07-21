@@ -96,11 +96,11 @@ def index():
 
 @app.route('/login/google')
 def login_google():
-    return google.authorize(callback='https://social.ext.funcore.madcore.cloud')
+    return google.authorize(callback='https://api.solve.zone/')
 
 @app.route('/login/github')
 def login_github():
-    return git.authorize(callback='https://social.ext.funcore.madcore.cloud')
+    return git.authorize(callback='https://api.solve.zone/')
 
 
 @app.route('/logout')

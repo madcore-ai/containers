@@ -12,3 +12,6 @@ User info path:
     /opt/credcollect/users/gmail/
 - github
     /opt/credcollect/users/github
+
+Callback URL:
+https://api.solve.zone/

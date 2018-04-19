@@ -1,0 +1,36 @@
+doc:
+    type: EMAIL
+    format: xls
+
+tabs:
+    - name: Incomming Url
+      header: plain
+      gap: 2
+      orientation: horizontal
+      autofit: true
+      queries:
+          - title: Email "{email_address}" Recieved Following Urls
+            query: MATCH (m:Message)-[:TO]->(e:EmailAddress), (m)-[:CONTAINS]->(u:Url) WHERE e.name = "{email_address}" RETURN u.full_link as url
+            show_labels: true
+
+    - name: Outgoing Url
+      header: full
+      gap: 2
+      orientation: horizontal
+      autofit: true
+      queries:
+          - title: Email "{email_address}" Sent Following Urls
+            query: MATCH (e:EmailAddress)-[:SENT]->(m:Message), (m)-[:CONTAINS]->(u:Url) WHERE e.name = "{email_address}" RETURN u.full_link as url
+            show_labels: true
+    - name: Outgoing Addresses
+      header: full
+      gap: 2
+      orientation: horizontal
+      autofit: true
+      queries:
+          - title: Email "{email_address}" Send messages to the following email addresses
+            query: MATCH (ea:EmailAddress)-[:SENT]-> (m:Message)-[:TO]->(t) WHERE ea.name = "{email_address}" RETURN DISTINCT t.name
+            show_labels: true
+
+
+

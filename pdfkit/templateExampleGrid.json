@@ -1,0 +1,149 @@
+{
+  "entity": {
+    "type": "person",
+    "name": "James Bond",
+    "debug": true,
+    "page-size": "A4",
+    "pages": [
+      {
+        "type": "person",
+        "max-x": 12,
+        "max-y": 12,
+        "gutter-margin-horizontal": 0,
+        "gutter-margin-vertical": 0,
+        "modules": [
+          {
+            "kind": "image",
+            "pos": [
+              1,
+              2
+            ],
+            "url": "https://wiki.madcore.ai/_media/core/madcorelogoblack001.png"
+          },
+          {
+            "kind": "image",
+            "pos": [
+              2,
+              2
+            ],
+            "url": "http://www.thekrausemouse.com/wp-content/uploads/2016/03/sample-1.jpg"
+          },
+          {
+            "kind": "text",
+            "webfont": "Arial",
+            "webfontsize": "40px",
+            "text": "James Bond",
+            "wrap": true,
+            "pos": [
+              3,
+              2
+            ]
+          },
+          {
+            "kind": "table",
+            "webfont": "Arial",
+            "webfontsize": "12px",
+            "class":"table-bordered",
+            "colspan":3,
+            "pos": [
+              4,
+              1
+            ],
+            "headers": [
+              "one",
+              "two",
+              "three",
+              "four"
+            ],
+            "data": [ [ "Peter","London","three",  "2017/05/31"], [ "jammy","London","three again",  "2017/05/31"] ]
+          },
+          {
+            "kind": "text",
+            "webfont": "Arial",
+            "webfontsize": "40px",
+            "text": "James Bond",
+            "wrap": true,
+            "colspan": 2,
+            "pos": [
+              6,
+              2
+            ]
+          },
+          {
+            "kind": "text",
+            "webfont": "Arial",
+            "webfontsize": "40px",
+            "text": "James Bond",
+            "wrap": false,
+            "pos": [
+              8,
+              3
+            ]
+          },
+          {
+            "kind": "text",
+            "webfont": "Arial",
+            "webfontsize": "40px",
+            "text": "James Bond",
+            "wrap": false,
+            "colspan": 2,
+            "pos": [
+              10,
+              3
+            ]
+          },
+          {
+            "kind": "text",
+            "webfont": "Arial",
+            "webfontsize": "40px",
+            "text": "Jaim jaimy",
+            "wrap": true,
+            "pos": [
+              5,
+              1
+            ]
+          },
+          {
+            "kind":"chart-donut",
+            "id":"chart3",
+            "chart-type":"donut",
+            "data-chart-max":"1000",
+            "data-chart-segments":"{ '0':['0','50','#FDCA00'], '1':['50','450','#19A7F5'], '2':['500','500','#8100C8'] }",
+            "data-chart-initial-rotate":"90",
+            "data-chart-caption":"3 Segments, 90 degree rotation",
+            "data-chart-text":"90°",
+            "pos":[4,5],
+            "colspan":2
+
+          },
+          {
+            "kind":"chart-donut",
+            "id":"chart4",
+            "chart-type":"donut",
+            "data-chart-max":"1000",
+            "data-chart-segments":"{ '0':['0','50','#FDCA00'], '1':['50','450','#19A7F5'], '2':['500','500','#8100C8'] }",
+            "data-chart-initial-rotate":"90",
+            "data-chart-caption":"3 Segments, 90 degree rotation",
+            "data-chart-text":"90°",
+            "pos":[5,6],
+            "colspan":2
+
+          },
+          {
+            "kind":"chart-donut",
+            "id":"chart5",
+            "chart-type":"donut",
+            "data-chart-max":"1000",
+            "data-chart-segments":"{ '0':['0','50','#FDCA00'], '1':['50','450','#19A7F5'], '2':['500','500','#8100C8'] }",
+            "data-chart-initial-rotate":"90",
+            "data-chart-caption":"3 Segments, 90 degree rotation",
+            "data-chart-text":"90°",
+            "pos":[4,8],
+            "colspan":2
+
+          }
+        ]
+      }
+    ]
+  }
+}

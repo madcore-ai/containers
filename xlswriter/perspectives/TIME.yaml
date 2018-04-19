@@ -1,0 +1,14 @@
+doc:
+    type: TIME
+    format: xls
+
+tabs:
+    - name: Information
+      header: plain
+      gap: 2
+      orientation: horizontal
+      autofit: true
+      queries:
+          - title: 
+            query: 
+            show_labels: true

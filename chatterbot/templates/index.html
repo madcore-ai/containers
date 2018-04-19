@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js">
+		</script>
+	</head>
+	<body>
+
+		<h1>Chatterbot</h1>
+
+
+	<p>
+		<span>Please enter your text : </span>&nbsp;
+		<input type="text" id="txt_chat">&nbsp;
+		<button type="button" id="btn_submit">Enter</button>
+		<br/>
+		<br/>
+		<span id="txt_response"></span>
+
+	</p>
+
+
+	</body>
+</html>
+<script>
+
+$('#btn_submit').click(function(){
+	$.ajax({
+        type: "GET",
+        url : "/process_chat",
+        data: {
+                  "chat_txt": $('#txt_chat').val()},
+        success:function(result){
+            $('#txt_response').html(result)
+        }
+      });
+
+})
+
+
+</script>
+

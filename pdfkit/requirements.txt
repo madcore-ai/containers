@@ -4,7 +4,7 @@ cycler==0.10.0
 Flask==0.10.1
 functools32==3.2.3.post2
 itsdangerous==0.24
-Jinja2==2.8
+Jinja2==2.11.3
 kafka-python==1.3.3
 MarkupSafe==0.23
 matplotlib==2.0.2
